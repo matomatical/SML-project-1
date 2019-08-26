@@ -10,5 +10,5 @@ class RandomHandleModel:
         self.rng = np.random.default_rng()
         self.handles = np.array([int(handle) for handle in handles])
     def predict(self, tweet):
-        return self.rng.choice(self.handles)
+        return str(self.rng.choice(self.handles))
 
