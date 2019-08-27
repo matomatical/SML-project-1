@@ -1,5 +1,7 @@
 import sys
 
+from tqdm import tqdm
+
 import data
 import models
 
@@ -13,7 +15,7 @@ def main():
 
     correct = 0
     tests = 0
-    for tweet in data.TRAIN: # TODO: replace with development data
+    for tweet in tqdm(data.DEVEL):
         predicted_handle = model.predict(tweet.text)
         if predicted_handle == tweet.handle:
             correct += 1
