@@ -5,7 +5,7 @@ import time
 def train(data):    
 
     ngramLen = 3
-    L = 200
+    L = 2000
 
     model = SimpleNGramModel(ngramLen)
     
@@ -53,7 +53,7 @@ class SimpleNGramModel:
                 self.invertedNgram[g].add(handle)
 
     def predict(self, tweet):
-        start = time.time()
+        # start = time.time()
         tweetGrams = self.generateNgrams(tweet)
         tweetGramsSet = set(tweetGrams)
 
@@ -71,9 +71,8 @@ class SimpleNGramModel:
         if len(matches) == 0:
             return "?????" # unknown 
         
-        end = time.time()
-
-        print(end-start)
+        # end = time.time()
+        # print(end-start)
         # print(match)
         return max(matches.items(), key = lambda x: x[1])[0]
         # return sorted(matches.items(), key = lambda x : x[1], reverse = True)[0]
