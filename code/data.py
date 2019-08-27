@@ -13,8 +13,11 @@ class Tweet:
 # tabs are ONLY used to separate ids from tweets,
 # newlines are ONLY used to terminate lines
 # there's no other whitespace before/after any tweet
-with open('../data/train_tweets.txt') as file:
+with open('../data/traditional_split/training_tweets.txt') as file:
     TRAIN = [Tweet(*line.strip().split('\t')) for line in file]
+
+with open('../data/traditional_split/dev_tweets.txt') as file:
+    DEVEL = [Tweet(*line.strip().split('\t')) for line in file]
 
 with open('../data/test_tweets_unlabeled.txt') as file:
     TEST = [Tweet('??????', line.strip()) for line in file]
