@@ -27,6 +27,8 @@ class SimpleNGramModel:
         self.ngrams = defaultdict(_ddictpickle) # {handle: {ngram: count, ...}, ...}
         # After triming converted to {handle: set(top_L_ngrams)}
 
+        self.invertedNgram = defaultdict(set) # {ngram: set(handles), ...} used for inverted index
+
 
     def feed(self, handle, text):
         for ngs in self.generateNgrams(text):
@@ -44,21 +46,37 @@ class SimpleNGramModel:
             # dict((n, c) for n,c in topL) -> set([n for n,_ in topL])
             self.ngrams[handle] = set([n for n,_ in topL])  
 
+        # Inverting index
+        for hg in self.ngrams.items():
+            handle = hg[0]
+            for g in hg[1]:
+                self.invertedNgram[g].add(handle)
+
     def predict(self, tweet):
-        
+        start = time.time()
         tweetGrams = self.generateNgrams(tweet)
         tweetGramsSet = set(tweetGrams)
-        highestMatch = 0
-        highestHandle = "?????"
 
-        for hn in self.ngrams.items():
-            matchCount = len(tweetGramsSet.intersection(hn[1]))
+        # {handle: count}
+        matches = defaultdict(int)
 
-            if matchCount > highestMatch:
-                highestMatch = matchCount
-                highestHandle = hn[0]
+        for gram in tweetGramsSet:
+            if gram not in self.invertedNgram: # unknown ngram, skip
+                continue
+            
+            # retrieve all handles with this ngram
+            for h in self.invertedNgram[gram]:
+                matches[h] += 1
+        
+        if len(matches) == 0:
+            return "?????" # unknown 
+        
+        end = time.time()
 
-        return highestHandle
+        print(end-start)
+        # print(match)
+        return max(matches.items(), key = lambda x: x[1])[0]
+        # return sorted(matches.items(), key = lambda x : x[1], reverse = True)[0]
 
     def generateNgrams(self, text):
         n = self.ngramLen
