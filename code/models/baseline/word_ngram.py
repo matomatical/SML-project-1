@@ -5,9 +5,9 @@ import time
 def train(data):    
 
     ngramLen = 3
-    L = 500
+    L = 200
 
-    model = SimpleNGramModel(ngramLen)
+    model = WordNGramModel(ngramLen)
     
     for t in data:
         model.feed(t.handle, t.text)
@@ -19,7 +19,7 @@ def train(data):
 def _ddictpickle(): # needed to pickle the module
     return defaultdict(int)
 
-class SimpleNGramModel:
+class WordNGramModel:
     def __init__(self, ngramLen):
 
         self.ngramLen = ngramLen
@@ -44,7 +44,7 @@ class SimpleNGramModel:
 
             # If not keeping count: 
             # dict((n, c) for n,c in topL) -> set([n for n,_ in topL])
-            self.ngrams[handle] = set([n for n,c in topL if c > 1])  
+            self.ngrams[handle] = set([n for n,_ in topL])  
 
         # Inverting index
         for hg in self.ngrams.items():
@@ -78,11 +78,12 @@ class SimpleNGramModel:
         # return sorted(matches.items(), key = lambda x : x[1], reverse = True)[0]
 
     def generateNgrams(self, text):
+        text = text.split()
         n = self.ngramLen
-        # n = 4
+        # n = 3
         ngrams = []
-        textPadded = " " + text + " "
+        textPadded = ["START"] + text + ["END"]
         for i in range(len(textPadded)-n+1):
-            ngrams.append(textPadded[i:i+n])
-                
-        return ngrams
+            ngrams.append(tuple(textPadded[i:i+n]))
+        
+        return tuple(ngrams)
