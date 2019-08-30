@@ -25,7 +25,7 @@ def generate_split_data(data=TRAIN, shuffle=True):
   return train, dev
 
 def export_split_data(train_filename, dev_filename, tweets):
-  train, dev = generate_split_data();
+  train, dev = generate_split_data()
   with open(train_filename, 'w') as outfile:
     outfile.writelines([tweet.handle + "\t" + tweet.text + "\n"  for tweet in train])
 
