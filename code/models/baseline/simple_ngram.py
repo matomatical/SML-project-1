@@ -18,14 +18,10 @@ class Model:
         self.invertedNgram = defaultdict(set) # {ngram: set(handles), ...} used for inverted index
 
         for t in data:
-            self.feed(t.handle, t.text)
+            for ng in t.char_ngram(self.ngramLen):
+                self.ngrams[t.handle][ng] += 1
         
         self.trim(self.L)
-
-
-    def feed(self, handle, text):
-        for ngs in self.generateNgrams(text):
-            self.ngrams[handle][ngs] += 1
 
     # keep L most frequent ngrams (including count?)
     def trim(self, L):
@@ -47,7 +43,8 @@ class Model:
 
     def predict(self, tweet):
         # start = time.time()
-        tweetGrams = self.generateNgrams(tweet)
+        # TODO take a tweet object instead
+        tweetGrams = tweet.char_ngram(self.ngramLen)
         tweetGramsSet = set(tweetGrams)
 
         # {handle: count}
@@ -69,13 +66,3 @@ class Model:
         # print(match)
         return max(matches.items(), key = lambda x: x[1])[0]
         # return sorted(matches.items(), key = lambda x : x[1], reverse = True)[0]
-
-    def generateNgrams(self, text):
-        n = self.ngramLen
-        # n = 4
-        ngrams = []
-        textPadded = " " + text + " "
-        for i in range(len(textPadded)-n+1):
-            ngrams.append(textPadded[i:i+n])
-                
-        return ngrams

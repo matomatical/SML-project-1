@@ -17,13 +17,10 @@ class Model:
         self.invertedNgram = defaultdict(set) # {ngram: set(handles), ...} used for inverted index
 
         for t in data:
-            self.feed(t.handle, t.text)
+            for ng in t.word_ngram(self.ngramLen):
+                self.ngrams[t.handle][ng] += 1
         
         self.trim(self.L)
-
-    def feed(self, handle, text):
-        for ngs in self.generateNgrams(text):
-            self.ngrams[handle][ngs] += 1
 
     # keep L most frequent ngrams (including count?)
     def trim(self, L):
@@ -67,14 +64,4 @@ class Model:
         # print(match)
         return max(matches.items(), key = lambda x: x[1])[0]
         # return sorted(matches.items(), key = lambda x : x[1], reverse = True)[0]
-
-    def generateNgrams(self, text):
-        text = text.split()
-        n = self.ngramLen
-        # n = 3
-        ngrams = []
-        textPadded = ["START"] + text + ["END"]
-        for i in range(len(textPadded)-n+1):
-            ngrams.append(tuple(textPadded[i:i+n]))
         
-        return tuple(ngrams)
