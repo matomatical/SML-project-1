@@ -2,32 +2,25 @@ import numpy as np
 from collections import defaultdict
 import time
 
-def train(data):    
-
-    ngramLen = 3
-    L = 500
-
-    model = SimpleNGramModel(ngramLen)
     
-    for t in data:
-        model.feed(t.handle, t.text)
-    
-    model.trim(L)
-
-    return model
-
 def _ddictpickle(): # needed to pickle the module
     return defaultdict(int)
 
-class SimpleNGramModel:
-    def __init__(self, ngramLen):
+class Model:
+    def __init__(self, data, n, L):
 
-        self.ngramLen = ngramLen
+        self.ngramLen = int(n)
+        self.L = int(L)
 
         self.ngrams = defaultdict(_ddictpickle) # {handle: {ngram: count, ...}, ...}
         # After triming converted to {handle: set(top_L_ngrams)}
 
         self.invertedNgram = defaultdict(set) # {ngram: set(handles), ...} used for inverted index
+
+        for t in data:
+            self.feed(t.handle, t.text)
+        
+        self.trim(self.L)
 
 
     def feed(self, handle, text):
