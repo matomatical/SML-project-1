@@ -4,10 +4,19 @@ class Tweet:
     def __init__(self, handle, text):
         self.handle = handle
         self.text = text
+        self.norm_text = text
+        
     def __repr__(self):
         return f"Tweet({self.handle!r}, {self.text!r})"
     def __str__(self):
         return f'@{self.handle} says: "{self.text}"'
+
+    # includes option to use normalised text or not, default to true
+    def char_ngram(self,n, norm = True): 
+        pass
+
+    def word_ngram(self, n, norm = True):
+        pass
 
 # data contains no stray tabs or newlines:
 # tabs are ONLY used to separate ids from tweets,
