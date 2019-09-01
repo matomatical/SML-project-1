@@ -39,7 +39,7 @@ def tokenise(tweet_text):
     PUNCT_AT_START  = re.compile(r"\s" + PUNCT_GROUPS), r" \g<1> "
     # if there is only one piece of punct in the middle (so "that's"
     # or "wishy-washy" but not "https://example.com") then split that too!
-    PUNCT_IN_MIDDLE = re.compile(r"\s(\w+)" + PUNCT_GROUPS + r"(\w+)(?=\s)"), r" \g<1> \g<2> \g<5> "
+    PUNCT_IN_MIDDLE = re.compile(r"\s(\w+)" + PUNCT_GROUPS + r"(\w+)(?=\s)"), r" \g<1> \g<2> \g<5>"
     # maybe we introduced some double spaces with the above; remove them.
     EXTRA_SPACES    = re.compile(r"\s\s*"), r" "
     # pad with spaces to simplify expressions (spaces are word boundaries)
@@ -52,19 +52,26 @@ def tokenise(tweet_text):
 
 def normalise(tweet_text):
     # Patterns for normalising, and their corresponding replacement
-    # Decision was made to keep "html tags", majority of uses are not actual html tags and are actually incredibly indicative of user
+    # Decision was made to keep "html tags", majority of uses are not
+    # actual html tags and are actually incredibly indicative of user
 
-    HASHTAG = re.compile(r'(?:\#+[\w_]+[\w\'_\-]*[\w_]+)', '#')
+    HASHTAG = re.compile(r'(?:\#+[\w_]+[\w\'_\-]*[\w_]+)'), '#'
 
-    MENTION = re.compile(r'(?<!\S)@[0-9a-zA-Z_]{1,}(?![0-9a-zA-Z_])', '@')
+    MENTION = re.compile(r'(?<!\S)@[0-9a-zA-Z_]{1,}(?![0-9a-zA-Z_])'), '@'
 
-    URL     = re.compile(r'((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)', 'U')
+    URL     = re.compile(r'((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?'
+                         r'[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)'
+                         r'[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??'
+                         r'(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)'), 'U'
 
-    DATE    = re.compile(r'(?<!\S)([0-3]?[0-9]\s?[/-]\s?[0-3]?[0-9]\s?[/-]\s?[0-9]{1,4}|[0-1]?[0-9]\s?[/-]\s?[0-9]{1,4}|[0-9]{1,4}\s?[/-]\s?[0-1]?[0-9]|[0-3]?[0-9]\s?[/-]\s?[0-3]?[0-9])(?![0-9a-zA-Z])', 'D')
+    DATE    = re.compile(r'(?<!\S)([0-3]?[0-9]\s?[/-]\s?[0-3]?[0-9]\s?[/-]\s?'
+                         r'[0-9]{1,4}|[0-1]?[0-9]\s?[/-]\s?[0-9]{1,4}|[0-9]{1,4}'
+                         r'\s?[/-]\s?[0-1]?[0-9]|[0-3]?[0-9]\s?[/-]\s?[0-3]?[0-9])'
+                         r'(?![0-9a-zA-Z])'), 'D'
 
-    TIME    = re.compile(r'[0-9]?[0-9]:[0-9]?[0-9](:[0-9]?[0-9])?', 'T')
+    TIME    = re.compile(r'[0-9]?[0-9]:[0-9]?[0-9](:[0-9]?[0-9])?'), 'T'
 
-    NUMS    = re.compile(r'(?:(?:\d+,?)+(?:\.?\d+)?)', 'N')
+    NUMS    = re.compile(r'(?:(?:\d+,?)+(?:\.?\d+)?)'), 'N'
     sparse_patterns = [HASHTAG, MENTION, URL, DATE, TIME, NUMS]
     
     normalised_text = tweet_text
