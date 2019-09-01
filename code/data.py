@@ -28,21 +28,20 @@ class Tweet:
 functions for pre-processing tweets (split words/punctutation,
 normalise sparse features like URLs, and more)
 """
-#                      v html escape code '&#?\w+;'
-#                               v punctuation symbols [.,!?:;"'~(){}[]<>*=-]
-PUNCT_GROUPS    = r"(((&#?\w+;)|[\.\,\!\?\:\;\"\'\~\(\)\{\}\[\]\<\>\*\=\-])+)"
-
-# first separate punctuation groups from the end of each word
-PUNCT_AT_END    = re.compile(PUNCT_GROUPS + r"\s"), r" \g<1> "
-# then take it away from the start too :)
-PUNCT_AT_START  = re.compile(r"\s" + PUNCT_GROUPS), r" \g<1> "
-# if there is only one piece of punct in the middle (so "that's"
-# or "wishy-washy" but not "https://example.com") then split that too!
-PUNCT_IN_MIDDLE = re.compile(r"\s(\w+)" + PUNCT_GROUPS + r"(\w+)(?=\s)"), r" \g<1> \g<2> \g<5> "
-# maybe we introduced some double spaces with the above; remove them.
-EXTRA_SPACES    = re.compile(r"\s\s*"), r" "
-
 def tokenise(tweet_text):
+    #                      v html escape code '&#?\w+;'
+    #                               v punctuation symbols [.,!?:;"'~(){}[]<>*=-]
+    PUNCT_GROUPS    = r"(((&#?\w+;)|[\.\,\!\?\:\;\"\'\~\(\)\{\}\[\]\<\>\*\=\-])+)"
+
+    # first separate punctuation groups from the end of each word
+    PUNCT_AT_END    = re.compile(PUNCT_GROUPS + r"\s"), r" \g<1> "
+    # then take it away from the start too :)
+    PUNCT_AT_START  = re.compile(r"\s" + PUNCT_GROUPS), r" \g<1> "
+    # if there is only one piece of punct in the middle (so "that's"
+    # or "wishy-washy" but not "https://example.com") then split that too!
+    PUNCT_IN_MIDDLE = re.compile(r"\s(\w+)" + PUNCT_GROUPS + r"(\w+)(?=\s)"), r" \g<1> \g<2> \g<5> "
+    # maybe we introduced some double spaces with the above; remove them.
+    EXTRA_SPACES    = re.compile(r"\s\s*"), r" "
     # pad with spaces to simplify expressions (spaces are word boundaries)
     text = f" {tweet_text} "
     # apply a sequence of pattern substitutions
@@ -51,22 +50,21 @@ def tokenise(tweet_text):
         text = pattern.sub(replacement, text)
     return text
 
-# Patterns for normalising, and their corresponding replacement
-# Decision was made to keep "html tags", majority of uses are not actual html tags and are actually incredibly indicative of user
-
-HASHTAG = re.compile(r'(?:\#+[\w_]+[\w\'_\-]*[\w_]+)', '#')
-
-MENTION = re.compile(r'(?<!\S)@[0-9a-zA-Z_]{1,}(?![0-9a-zA-Z_])', '@')
-
-URL     = re.compile(r'((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)', 'U')
-
-DATE    = re.compile(r'(?<!\S)([0-3]?[0-9]\s?[/-]\s?[0-3]?[0-9]\s?[/-]\s?[0-9]{1,4}|[0-1]?[0-9]\s?[/-]\s?[0-9]{1,4}|[0-9]{1,4}\s?[/-]\s?[0-1]?[0-9]|[0-3]?[0-9]\s?[/-]\s?[0-3]?[0-9])(?![0-9a-zA-Z])', 'D')
-
-TIME    = re.compile(r'[0-9]?[0-9]:[0-9]?[0-9](:[0-9]?[0-9])?', 'T')
-
-NUMS    = re.compile(r'(?:(?:\d+,?)+(?:\.?\d+)?)', 'N')
-
 def normalise(tweet_text):
+    # Patterns for normalising, and their corresponding replacement
+    # Decision was made to keep "html tags", majority of uses are not actual html tags and are actually incredibly indicative of user
+
+    HASHTAG = re.compile(r'(?:\#+[\w_]+[\w\'_\-]*[\w_]+)', '#')
+
+    MENTION = re.compile(r'(?<!\S)@[0-9a-zA-Z_]{1,}(?![0-9a-zA-Z_])', '@')
+
+    URL     = re.compile(r'((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)', 'U')
+
+    DATE    = re.compile(r'(?<!\S)([0-3]?[0-9]\s?[/-]\s?[0-3]?[0-9]\s?[/-]\s?[0-9]{1,4}|[0-1]?[0-9]\s?[/-]\s?[0-9]{1,4}|[0-9]{1,4}\s?[/-]\s?[0-1]?[0-9]|[0-3]?[0-9]\s?[/-]\s?[0-3]?[0-9])(?![0-9a-zA-Z])', 'D')
+
+    TIME    = re.compile(r'[0-9]?[0-9]:[0-9]?[0-9](:[0-9]?[0-9])?', 'T')
+
+    NUMS    = re.compile(r'(?:(?:\d+,?)+(?:\.?\d+)?)', 'N')
     sparse_patterns = [HASHTAG, MENTION, URL, DATE, TIME, NUMS]
     
     normalised_text = tweet_text
