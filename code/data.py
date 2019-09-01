@@ -54,22 +54,22 @@ def normalise(tweet_text):
     # Patterns for normalising, and their corresponding replacement
     # Decision was made to keep "html tags", majority of uses are not actual html tags and are actually incredibly indicative of user
 
-    HASHTAG = re.compile(r'(?:\#+[\w_]+[\w\'_\-]*[\w_]+)', '#')
+    HASHTAG = (r'(?:\#+[\w_]+[\w\'_\-]*[\w_]+)', '#')
 
-    MENTION = re.compile(r'(?<!\S)@[0-9a-zA-Z_]{1,}(?![0-9a-zA-Z_])', '@')
+    MENTION = (r'(?<!\S)@[0-9a-zA-Z_]{1,}(?![0-9a-zA-Z_])', '@')
 
-    URL     = re.compile(r'((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)', 'U')
+    URL     = (r'((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)', 'U')
 
-    DATE    = re.compile(r'(?<!\S)([0-3]?[0-9]\s?[/-]\s?[0-3]?[0-9]\s?[/-]\s?[0-9]{1,4}|[0-1]?[0-9]\s?[/-]\s?[0-9]{1,4}|[0-9]{1,4}\s?[/-]\s?[0-1]?[0-9]|[0-3]?[0-9]\s?[/-]\s?[0-3]?[0-9])(?![0-9a-zA-Z])', 'D')
+    DATE    = (r'(?<!\S)([0-3]?[0-9]\s?[/-]\s?[0-3]?[0-9]\s?[/-]\s?[0-9]{1,4}|[0-1]?[0-9]\s?[/-]\s?[0-9]{1,4}|[0-9]{1,4}\s?[/-]\s?[0-1]?[0-9]|[0-3]?[0-9]\s?[/-]\s?[0-3]?[0-9])(?![0-9a-zA-Z])', 'D')
 
-    TIME    = re.compile(r'[0-9]?[0-9]:[0-9]?[0-9](:[0-9]?[0-9])?', 'T')
+    TIME    = (r'[0-9]?[0-9]:[0-9]?[0-9](:[0-9]?[0-9])?', 'T')
 
-    NUMS    = re.compile(r'(?:(?:\d+,?)+(?:\.?\d+)?)', 'N')
+    NUMS    = (r'(?:(?:\d+,?)+(?:\.?\d+)?)', 'N')
     sparse_patterns = [HASHTAG, MENTION, URL, DATE, TIME, NUMS]
     
     normalised_text = tweet_text
     for pattern, replacement in sparse_patterns:
-        normalised_text = pattern.sub(replacement, normalised_text)
+        normalised_text = re.sub(pattern, replacement, normalised_text)
     return normalised_text
 
 # data contains no stray tabs or newlines:
