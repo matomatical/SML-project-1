@@ -2,7 +2,7 @@ import sys
 
 from tqdm import tqdm
 
-import data; data.load_devel()
+import data
 import models
 
 def main():
@@ -12,6 +12,9 @@ def main():
     module_name = sys.argv[1]
     hyper_parameters = models.parse_hyper_parameters(sys.argv[2:])
     model = models.load(module_name, hyper_parameters)
+
+    data.load_devel()
+
     print("Model:", module_name, hyper_parameters)
 
     accuracy, correct, tests = evaluate(model, data.DEVEL)
