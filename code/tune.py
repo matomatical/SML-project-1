@@ -1,4 +1,4 @@
-import data
+import data; data.load_train()
 import eval
 from models.baseline.simple_ngram import Model
 import sklearn.model_selection as model_selection
@@ -30,4 +30,4 @@ for params in model_selection.ParameterGrid(GRID):
     accuracies.append(accuracy)
     print(f"accuracy: {accuracy:.2%}")
   avg_accuracy = sum(accuracies)/len(accuracies)
-  print("Finished testing", params, f"mean accuracy from {N_SPLITS} folds: {avg_accuracy:.2%}")
+  print(f"Finished testing {params}. Mean accuracy from {N_SPLITS} folds: {avg_accuracy:.2%}")

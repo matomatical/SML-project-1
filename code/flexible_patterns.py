@@ -1,5 +1,6 @@
 from collections import defaultdict
-from data import Tweet, TRAIN 
+from data import Tweet
+import data; data.load_train(); TRAIN = data.TRAIN
 
 from enum import Enum 
  

@@ -9,9 +9,13 @@ def main():
     if len(sys.argv) <= 1:
         print("please specify a model name (e.g. models.baseline.random_handle)")
         sys.exit(1)
-    model_name = sys.argv[1]
-    model = models.load(model_name)
-    print("Model:", model_name)
+    module_name = sys.argv[1]
+    hyper_parameters = models.parse_hyper_parameters(sys.argv[2:])
+    model = models.load(module_name, hyper_parameters)
+
+    data.load_devel()
+
+    print("Model:", module_name, hyper_parameters)
 
     accuracy, correct, tests = evaluate(model, data.DEVEL)
 
