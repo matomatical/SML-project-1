@@ -35,17 +35,23 @@ LOGFILENAME = os.path.join(LOGFILEDIR, MODULE + ".jsonl") # log results in JSON-
 
 
 # Let the science begin! #uwu
-for params in tqdm(GRID, desc="Parameter combinations", position=2):
+bar_grid = tqdm(GRID, desc="Parameter combinations", position=2, dynamic_ncols=True)
+for params in bar_grid:
     tqdm.write(f"Parameter combination: {params}")
     
     # begin experiment for this parameter combination:
     accuracies = []
-    for i, (train_ids, test_ids) in enumerate(tqdm(FOLDS, desc="Cross-validation", position=1, leave=False), start=1):
+    bar_folds = tqdm(FOLDS, desc="Cross-validation", position=1, leave=False, dynamic_ncols=True)
+    for i, (train_ids, test_ids) in enumerate(bar_folds, start=1):
         # train and evalute the model on this data split:
-        model = MODEL(tqdm(DATA[train_ids], desc="training", position=0, leave=False), **params)
-        accuracy, *_ = eval.evaluate(model, tqdm(DATA[test_ids], desc="evaluating", position=0, leave=False))
+        bar_train = tqdm(DATA[train_ids], desc="Training...", position=0, leave=False, dynamic_ncols=True)
+        model = MODEL(bar_train, **params)
+        bar_eval = tqdm(DATA[test_ids], desc="Evaluating...", position=0, leave=False, dynamic_ncols=True)
+        accuracy, *_ = eval.evaluate(model, bar_eval)
         accuracies.append(accuracy)
         tqdm.write(f"Test {i} of {params} complete. Fold accuracy: {accuracy:.2%}")
+
+    # experiment done! compute the average result
     avg_accuracy = sum(accuracies)/len(accuracies)
     tqdm.write(f"Finished testing {params}. Mean accuracy from {N_SPLITS} folds: {avg_accuracy:.2%}")
     # and don't forget to record the results to the log file!
