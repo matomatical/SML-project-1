@@ -1,7 +1,7 @@
 import sys
 import importlib
 
-import data
+import data; data.load_train()
 import models
 
 def main():

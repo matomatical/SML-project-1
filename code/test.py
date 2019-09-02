@@ -3,7 +3,7 @@ import time
 
 from tqdm import tqdm
 
-import data
+import data; data.load_test()
 import models
 
 def main():
