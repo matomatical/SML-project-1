@@ -10,16 +10,19 @@ def main():
     if len(sys.argv) <= 1:
         print("please specify a model name (e.g. models.baseline.random_handle)")
         sys.exit(1)
-    model_name = sys.argv[1]
-    model = models.load(model_name)
-    print("Model:", model_name)
+    module_name = sys.argv[1]
+    hyper_parameters = models.parse_hyper_parameters(sys.argv[2:])
+    model = models.load(module_name, hyper_parameters)
+    print("Model:", module_name, hyper_parameters)
 
     print("Labelling unlabelled tweets...")
     for tweet in tqdm(data.TEST):
-        tweet.handle = model.predict(tweet.text)
+        tweet.handle = model.predict(tweet)
 
     print("Saving submission...")
-    filename = f"../submissions/submission-{time.strftime('%m-%d_%H-%M-%S')}.csv"
+    current_time = time.strftime('%m-%d_%H-%M-%S')
+    model_name = models.model_name(module_name, hyper_parameters)
+    filename = f"../submissions/submission-{current_time}-{model_name}.csv"
     data.export(filename, data.TEST)
     print("Saved to:", filename)
 

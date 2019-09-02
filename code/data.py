@@ -82,18 +82,29 @@ def normalise(tweet_text):
         normalised_text = re.sub(pattern, replacement, normalised_text)
     return normalised_text
 
+
+"""
+Load the data
+"""
 # data contains no stray tabs or newlines:
 # tabs are ONLY used to separate ids from tweets,
 # newlines are ONLY used to terminate lines
 # there's no other whitespace before/after any tweet
+print("Loading and normalising tweet data (TODO: Lazy loading)")
+print(" Loading ../data/traditional_split/training_tweets.txt into TRAIN")
 with open('../data/traditional_split/training_tweets.txt') as file:
     TRAIN = [Tweet(*line.strip().split('\t')) for line in file]
 
+print(" Loading ../data/traditional_split/dev_tweets.txt into DEVEL")
 with open('../data/traditional_split/dev_tweets.txt') as file:
     DEVEL = [Tweet(*line.strip().split('\t')) for line in file]
 
+print(" Loading ../data/test_tweets_unlabeled.txt into TEST")
 with open('../data/test_tweets_unlabeled.txt') as file:
     TEST = [Tweet('??????', line.strip()) for line in file]
+
+print("Data loaded!")
+
 
 def export(filename, tweets):
     with open(filename, 'w') as outfile:
