@@ -4,8 +4,6 @@ import importlib
 import data
 import models
 
-from tqdm import tqdm
-
 def main():
     if len(sys.argv) <= 1:
         print("please specify a model name (e.g. models.baseline.random_handle)")
