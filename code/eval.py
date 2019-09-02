@@ -16,7 +16,7 @@ def main():
     correct = 0
     tests = 0
     for tweet in tqdm(data.DEVEL):
-        predicted_handle = model.predict(tweet.text)
+        predicted_handle = model.predict(tweet)
         if predicted_handle == tweet.handle:
             correct += 1
         tests += 1
