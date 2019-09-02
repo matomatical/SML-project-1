@@ -13,16 +13,22 @@ def main():
     model = models.load(model_name)
     print("Model:", model_name)
 
+    accuracy, correct, tests = evaluate(model, data.DEVEL)
+
+    print(f"Label accuracy: {correct}/{tests} ({accuracy:%})")
+
+def evaluate(model, data):
     correct = 0
     tests = 0
-    for tweet in tqdm(data.DEVEL):
+    for tweet in tqdm(data):
         predicted_handle = model.predict(tweet)
         if predicted_handle == tweet.handle:
             correct += 1
         tests += 1
 
     accuracy = correct / tests
-    print(f"Label accuracy: {correct}/{tests} ({accuracy:%})")
+    return accuracy, correct, tests
+
 
 if __name__ == '__main__':
     main()

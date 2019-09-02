@@ -1,8 +1,20 @@
 from collections import defaultdict
 from data import Tweet, TRAIN 
 
-HFW = 0
-CW = 1
+from enum import Enum 
+ 
+class label(Enum):
+  HFW = 0;
+  CW = 1
+
+  def __repr__(self):
+    return self.name
+  
+  def __str__(self):
+    return self.name
+
+HFW = label.HFW
+CW = label.CW
 
 class FlexiblePattern:
   # pattern is a tuple of (word, label) tuples
@@ -35,7 +47,7 @@ def generate_hfw(tweets=TRAIN):
   word_freq = defaultdict(int)
 
   for tweet in tweets:
-    for word in tweet.text.lower().split():
+    for word in tweet.normalised_text.lower().split():
       word_freq[word] += 1
   hfw_threshold = len(word_freq) * 10e-4
 

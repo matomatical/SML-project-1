@@ -2,6 +2,8 @@ import numpy as np
 from collections import defaultdict
 import time
 
+from tqdm import tqdm
+
     
 def _ddictpickle(): # needed to pickle the module
     return defaultdict(int)
@@ -17,7 +19,7 @@ class Model:
 
         self.invertedNgram = defaultdict(set) # {ngram: set(handles), ...} used for inverted index
 
-        for t in data:
+        for t in tqdm(data):
             for ng in t.char_ngram(self.ngramLen):
                 self.ngrams[t.handle][ng] += 1
         
