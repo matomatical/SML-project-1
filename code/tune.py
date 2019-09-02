@@ -1,4 +1,4 @@
-import data
+import data; data.load_train()
 import eval
 from models.baseline.simple_ngram import Model
 import sklearn.model_selection as model_selection

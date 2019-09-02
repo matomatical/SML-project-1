@@ -2,7 +2,7 @@ import sys
 
 from tqdm import tqdm
 
-import data
+import data; data.load_devel()
 import models
 
 def main():

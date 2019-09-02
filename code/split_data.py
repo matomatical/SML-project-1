@@ -1,4 +1,4 @@
-from data import TRAIN 
+import data; data.load_train(); TRAIN = data.TRAIN
 from itertools import groupby
 
 import sklearn.model_selection as model_selection
