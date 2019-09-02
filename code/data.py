@@ -22,8 +22,7 @@ class Tweet:
         chosen_text = self.normalised_text if norm else self.text
         # chosen_text = re.sub(r"[\W]+", " ", chosen_text) # Might be good to remove punctuations, brackets etc from the word gram, as they're captured in the char gram
         chosen_text = re.sub(r"[\[\\\^\.\|\?\(\),<>/;:'\"{}~`]", " ", chosen_text).split() # "purifies" the string so it's just words. probably. 
-        return [x for x in ngrams(chosen_text, n, pad_left=True, left_pad_symbol="STT", pad_right=True, right_pad_symbol="END")]
-        
+        return [x for x in ngrams(chosen_text, n, pad_left=True, left_pad_symbol="STT", pad_right=True, right_pad_symbol="END")]        
 """
 functions for pre-processing tweets (split words/punctutation,
 normalise sparse features like URLs, and more)
