@@ -19,18 +19,18 @@ class Model:
 
         self.meanFrequencies = defaultdict(float)
         for t in tqdm(data):
-            self.feed(t)
-        
+            for ng in t.char_ngram(self.n):
+                self.ngrams[t.handle][ng] += 1
+                self.meanFrequencies[ng] += 1
+
         total_grams = sum(self.meanFrequencies.values())
         for gram in self.meanFrequencies:
             self.meanFrequencies[gram] = self.meanFrequencies[gram] / total_grams
         
-    def feed(self, tweet):
-        for ngs in tweet.char_ngram(self.n):
-            self.ngrams[tweet.handle][ngs] += 1
-            self.meanFrequencies[ngs] += 1
+        self.trim(self.L)
+            
 
-    # keep L most frequent ngrams (including count?)
+    # keep L most distinctive ngrams (including count?)
     def trim(self, L):
         recentered = {}
 
@@ -55,7 +55,6 @@ class Model:
         
 
 
-        # {handle: count}
         distances = defaultdict(int)
 
         for gram in tweetGramsCounter:
