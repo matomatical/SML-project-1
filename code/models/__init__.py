@@ -1,7 +1,9 @@
 import os
 import pickle
 
+
 MODEL_PATH = "models/pickles/"
+os.makedirs(MODEL_PATH, exist_ok=True)
 
 def parse_hyper_parameters(args):
     hyper_parameters = {}
