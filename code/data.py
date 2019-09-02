@@ -5,7 +5,7 @@ import re
 class Tweet:
     def __init__(self, handle, text):
         self.handle = handle
-        self.text = text
+        self.raw_text = text
         self.normalised_text = normalise(tokenise(text))
 
     def __repr__(self):
@@ -15,11 +15,11 @@ class Tweet:
 
     # includes option to use normalised text or not
     def char_ngram(self, n, norm=True):
-        chosen_text = self.normalised_text if norm else self.text
+        chosen_text = self.normalised_text if norm else self.raw_text
         return [''.join(x) for x in ngrams(chosen_text, n, pad_left=True, left_pad_symbol=" ", pad_right=True, right_pad_symbol=" ")]
 
     def word_ngram(self, n, norm=True):
-        chosen_text = self.normalised_text if norm else self.text
+        chosen_text = self.normalised_text if norm else self.raw_text
         # chosen_text = re.sub(r"[\W]+", " ", chosen_text) # Might be good to remove punctuations, brackets etc from the word gram, as they're captured in the char gram
         # chosen_text = re.sub(r"[\[\\\^\.\|\?\(\),<>/;:'\"{}~`]", " ", chosen_text).split() # "purifies" the string so it's just words. probably. 
         chosen_split = chosen_text.split()
@@ -55,7 +55,8 @@ def normalise(tweet_text):
     # Patterns for normalising, and their corresponding replacement
     # Decision was made to keep "html tags", majority of uses are not
     # actual html tags and are actually incredibly indicative of user
-
+    # Patterns obtained from: 
+    #       https://github.com/theocjr/social-media-forensics/blob/master/microblog_authorship_attribution/dataset_pre_processing/tagging_irrelevant_data.py
     HASHTAG = re.compile(r'(?:\#+[\w_]+[\w\'_\-]*[\w_]+)'), '#'
 
     MENTION = re.compile(r'(?<!\S)@[0-9a-zA-Z_]{1,}(?![0-9a-zA-Z_])'), '@'

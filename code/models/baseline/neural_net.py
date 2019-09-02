@@ -6,7 +6,7 @@ from collections import defaultdict
 #     return defaultdict(int)
 
 class Model:
-
+    # TODO change to use pytorch instead
     def __init__(self, data, n, w, hidden_dim, seed):
         # not sure how to model size of hidden_dimension
         self.cgram_len = int(n)
@@ -41,9 +41,9 @@ class Model:
         for gram, count in self.ngrams.items():
             if count > 1:
                 self.indices[gram] = self.total_grams
+                self.total_grams += 1
             else:
                 discarded += 1
-            self.total_grams += 1
             # record ngrams and their indices
             # for ng in t.char_ngram(self.cgram_len): # 19030707 grams
             #     self.indices[ng] = self.total_grams
