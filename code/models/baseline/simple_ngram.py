@@ -18,7 +18,7 @@ class Model:
         self.invertedNgram = defaultdict(set) # {ngram: set(handles), ...} used for inverted index
 
         for t in data:
-            for ng in t.char_ngram(self.ngramLen):
+            for ng in t.char_ngram(self.ngramLen, norm=True):
                 self.ngrams[t.handle][ng] += 1
         
         self.trim(self.L)
@@ -42,7 +42,7 @@ class Model:
                 self.invertedNgram[g].add(handle)
 
     def predict(self, tweet):
-        tweetGrams = tweet.char_ngram(self.ngramLen)
+        tweetGrams = tweet.char_ngram(self.ngramLen, norm=True)
         tweetGramsSet = set(tweetGrams)
 
         # {handle: count}
