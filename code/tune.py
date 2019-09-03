@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 import json
 import importlib
@@ -27,32 +28,38 @@ os.makedirs(LOGFILEDIR, exist_ok=True)
 
 
 def main():    
-    # Define the experiments here: ------------------------------------------ #
+    # which folds should we test? shallow or deep search?
+    first_fold, last_fold = map(int, sys.argv[1].split('-'))
+    print("Experimenting with folds", first_fold, "to", last_fold, "inclusive")
+    folds = FOLDS[first_fold-1:last_fold]
+    
     # which model to experiment with?
-    MODULE = "models.baseline.simple_ngram"
+    module_name = sys.argv[2]
+    print("Model:", module_name)
+    model_class = importlib.import_module(module_name).Model
 
     # what values of hyperparameters define the grid?
     # keys: hyper parameter names, values: list of values for hyper parameters
-    GRID = model_selection.ParameterGrid({
-        "L": [300, 400, 500, 600, 700],
-        "n": [6]
-    })
+    # turns ["L=300,400,500", "n=3,4,5"] into a {"L": ["300", ...], "n": ["3", ...]}
+    grid_spec = {arg.split("=")[0]: arg.split("=")[1].split(",") for arg in sys.argv[3:]}
+    print("Grid spec", grid_spec)
+    grid = model_selection.ParameterGrid(grid_spec)
+    
 
     # Where to save the results?
-    LOGFILENAME = os.path.join(LOGFILEDIR, MODULE + ".jsonl")
+    LOGFILENAME = os.path.join(LOGFILEDIR, module_name + ".jsonl")
     # (default: experiments/MODULE_NAME.jsonl)
     # ----------------------------------------------------------------------- #
 
     # Let the science begin! #uwu
-    model_class = importlib.import_module(MODULE).Model
-    bar_grid = tqdm(GRID, desc="Parameter combinations", position=2, dynamic_ncols=True)
+    bar_grid = tqdm(grid, desc="Parameter combinations", position=2, dynamic_ncols=True)
     for params in bar_grid:
         tqdm.write(f"Parameter combination: {params}")
         
         # begin experiments for this parameter combination:
         accuracies = []
-        bar_folds = tqdm(FOLDS, desc="Cross-validation", position=1, leave=False, dynamic_ncols=True)
-        for i, fold in enumerate(bar_folds, start=1):
+        bar_folds = tqdm(folds, desc="Cross-validation", position=1, leave=False, dynamic_ncols=True)
+        for i, fold in enumerate(bar_folds, start=first_fold):
             accuracy = experiment(params, (i, fold), model_class, LOGFILENAME)
             tqdm.write(f"Test {i} of {params} complete. Fold accuracy: {accuracy:.2%}")
             accuracies.append(accuracy)
