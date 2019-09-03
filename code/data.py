@@ -94,28 +94,28 @@ DEVEL1000 = None
 def load_train():
     global TRAIN
     if TRAIN is None:
-        print(" Loading ../data/traditional_split/training_tweets.txt into TRAIN")
+        print("[data.py] Loading ../data/traditional_split/training_tweets.txt into TRAIN")
         with open('../data/traditional_split/training_tweets.txt') as file:
             TRAIN = [Tweet(*line.strip().split('\t')) for line in file]
 
 def load_devel():
     global DEVEL
     if DEVEL is None:
-        print(" Loading ../data/traditional_split/dev_tweets.txt into DEVEL")
+        print("[data.py] Loading ../data/traditional_split/dev_tweets.txt into DEVEL")
         with open('../data/traditional_split/dev_tweets.txt') as file:
             DEVEL = [Tweet(*line.strip().split('\t')) for line in file]
 
 def load_devel1000():
     global DEVEL1000
     if DEVEL1000 is None:
-        print(" Loading ../data/traditional_split/1000_dev_tweets.txt into DEVEL")
+        print("[data.py] Loading ../data/traditional_split/1000_dev_tweets.txt into DEVEL")
         with open('../data/traditional_split/1000_dev_tweets.txt') as file:
             DEVEL1000 = [Tweet(*line.strip().split('\t')) for line in file]
 
 def load_test():
     global TEST
     if TEST is None:
-        print(" Loading ../data/test_tweets_unlabeled.txt into TEST")
+        print("[data.py] Loading ../data/test_tweets_unlabeled.txt into TEST")
         with open('../data/test_tweets_unlabeled.txt') as file:
             TEST = [Tweet('??????', line.strip()) for line in file]
 
