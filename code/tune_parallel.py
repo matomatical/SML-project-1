@@ -74,7 +74,10 @@ def main():
     print(results)
 
 def experiment_wrapper(job):
+    print("starting", job)
     experiment(*job)
+    print("done!", job)
+
 
 def experiment(params, fold, model_class, logfilename):
     # unpack the data split for this experiment
