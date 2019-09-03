@@ -9,9 +9,9 @@ class Tweet:
         self.normalised_text = normalise(tokenise(text))
 
     def __repr__(self):
-        return f"Tweet({self.handle!r}, {self.text!r})"
+        return f"Tweet({self.handle!r}, {self.raw_text!r})"
     def __str__(self):
-        return f'@{self.handle} says: "{self.text}"'
+        return f'@{self.handle} says: "{self.raw_text}"'
 
     # includes option to use normalised text or not
     def char_ngram(self, n, norm=True):
