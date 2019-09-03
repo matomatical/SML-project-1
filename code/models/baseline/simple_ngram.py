@@ -1,12 +1,10 @@
 import numpy as np
 from collections import defaultdict
-import time
 
-from tqdm import tqdm
 
-    
 def _ddictpickle(): # needed to pickle the module
     return defaultdict(int)
+
 
 class Model:
     def __init__(self, data, n, L):
@@ -19,8 +17,8 @@ class Model:
 
         self.invertedNgram = defaultdict(set) # {ngram: set(handles), ...} used for inverted index
 
-        for t in tqdm(data):
-            for ng in t.char_ngram(self.ngramLen):
+        for t in data:
+            for ng in t.char_ngram(self.ngramLen, norm=True):
                 self.ngrams[t.handle][ng] += 1
         
         self.trim(self.L)
@@ -44,9 +42,7 @@ class Model:
                 self.invertedNgram[g].add(handle)
 
     def predict(self, tweet):
-        # start = time.time()
-        # TODO take a tweet object instead
-        tweetGrams = tweet.char_ngram(self.ngramLen)
+        tweetGrams = tweet.char_ngram(self.ngramLen, norm=True)
         tweetGramsSet = set(tweetGrams)
 
         # {handle: count}
@@ -63,8 +59,6 @@ class Model:
         if len(matches) == 0:
             return "?????" # unknown 
         
-        # end = time.time()
-        # print(end-start)
         # print(match)
         return max(matches.items(), key = lambda x: x[1])[0]
         # return sorted(matches.items(), key = lambda x : x[1], reverse = True)[0]

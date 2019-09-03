@@ -17,14 +17,14 @@ def main():
 
     print("Model:", module_name, hyper_parameters)
 
-    accuracy, correct, tests = evaluate(model, data.DEVEL)
+    accuracy, correct, tests = evaluate(model, tqdm(data.DEVEL))
 
     print(f"Label accuracy: {correct}/{tests} ({accuracy:%})")
 
 def evaluate(model, data):
     correct = 0
     tests = 0
-    for tweet in tqdm(data):
+    for tweet in data:
         predicted_handle = model.predict(tweet)
         if predicted_handle == tweet.handle:
             correct += 1

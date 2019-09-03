@@ -1,6 +1,8 @@
 import sys
 import importlib
 
+from tqdm import tqdm
+
 import data; data.load_train()
 import models
 
@@ -15,7 +17,7 @@ def main():
     # training model
     module = importlib.import_module(module_name)
     print(f"Training {module_name}.Model with hyperparameters {hyper_parameters}")
-    model = module.Model(data.TRAIN, **hyper_parameters)
+    model = module.Model(tqdm(data.TRAIN), **hyper_parameters)
     print("Training done!")
     
     models.save(model, module_name, hyper_parameters)
