@@ -17,7 +17,7 @@ def main():
 
     print("Model:", module_name, hyper_parameters)
 
-    accuracy, correct, tests = evaluate(model, tqdm(data.DEVEL))
+    accuracy, correct, tests = evaluate(model, tqdm(data.DEVEL, dynamic_ncols=True))
 
     print(f"Label accuracy: {correct}/{tests} ({accuracy:%})")
 

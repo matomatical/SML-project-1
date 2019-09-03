@@ -17,7 +17,7 @@ def main():
     # training model
     module = importlib.import_module(module_name)
     print(f"Training {module_name}.Model with hyperparameters {hyper_parameters}")
-    model = module.Model(tqdm(data.TRAIN), **hyper_parameters)
+    model = module.Model(tqdm(data.TRAIN, dynamic_ncols=True), **hyper_parameters)
     print("Training done!")
     
     models.save(model, module_name, hyper_parameters)
