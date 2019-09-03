@@ -89,6 +89,7 @@ Load the data, lazily
 TRAIN = None
 DEVEL = None
 TEST  = None
+DEVEL1000 = None
 
 def load_train():
     global TRAIN
@@ -103,6 +104,13 @@ def load_devel():
         print(" Loading ../data/traditional_split/dev_tweets.txt into DEVEL")
         with open('../data/traditional_split/dev_tweets.txt') as file:
             DEVEL = [Tweet(*line.strip().split('\t')) for line in file]
+
+def load_devel1000():
+    global DEVEL1000
+    if DEVEL1000 is None:
+        print(" Loading ../data/traditional_split/1000_dev_tweets.txt into DEVEL")
+        with open('../data/traditional_split/1000_dev_tweets.txt') as file:
+            DEVEL1000 = [Tweet(*line.strip().split('\t')) for line in file]
 
 def load_test():
     global TEST
