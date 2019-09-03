@@ -50,12 +50,11 @@ for params in bar_grid:
         accuracy, *_ = eval.evaluate(model, bar_eval)
         accuracies.append(accuracy)
         tqdm.write(f"Test {i} of {params} complete. Fold accuracy: {accuracy:.2%}")
+        # and don't forget to record the results to the log file!
+        with open(LOGFILENAME, 'a') as logfile:
+            results = {'params': params, 'fold': i, 'accuracy': accuracy, 'time': time.time()}
+            print(json.dumps(results), file=logfile, flush=True)
 
     # experiment done! compute the average result
     avg_accuracy = sum(accuracies)/len(accuracies)
     tqdm.write(f"Finished testing {params}. Mean accuracy from {N_SPLITS} folds: {avg_accuracy:.2%}")
-    # and don't forget to record the results to the log file!
-    with open(LOGFILENAME, 'a') as logfile:
-        results = {'params': params, 'accuracy': accuracy, 'accuracies': accuracies, 'time': time.time()}
-        logfile.write(json.dumps(results)+"\n")
-        logfile.flush()
