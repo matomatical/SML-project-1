@@ -34,8 +34,8 @@ def main():
     # what values of hyperparameters define the grid?
     # keys: hyper parameter names, values: list of values for hyper parameters
     GRID = model_selection.ParameterGrid({
-        "L": [200, 500, 1000],
-        "n": [2, 3, 4, 5]
+        "L": [300, 400, 500, 600, 700],
+        "n": [6]
     })
 
     # Where to save the results?
