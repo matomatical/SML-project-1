@@ -13,8 +13,6 @@ import data
 import eval
 
 
-# import the specified model:
-
 # generate and fold training data
 data.load_train()
 DATA = np.array(data.TRAIN)
@@ -27,29 +25,12 @@ LOGFILEDIR  = "experiments"
 os.makedirs(LOGFILEDIR, exist_ok=True)
 
 
-def main():    
-    # which folds should we test? shallow or deep search?
-    first_fold, last_fold = map(int, sys.argv[1].split('-'))
-    print("Experimenting with folds", first_fold, "to", last_fold, "inclusive")
-    folds = FOLDS[first_fold-1:last_fold]
-    
-    # which model to experiment with?
-    module_name = sys.argv[2]
-    print("Model:", module_name)
-    model_class = importlib.import_module(module_name).Model
-
-    # what values of hyperparameters define the grid?
-    # keys: hyper parameter names, values: list of values for hyper parameters
-    # turns ["L=300,400,500", "n=3,4,5"] into a {"L": ["300", ...], "n": ["3", ...]}
-    grid_spec = {arg.split("=")[0]: arg.split("=")[1].split(",") for arg in sys.argv[3:]}
-    print("Grid spec", grid_spec)
-    grid = model_selection.ParameterGrid(grid_spec)
-    
+def main():
+    first_fold_id, folds, module_name, model_class, grid = parse_args(sys.argv[1:])
 
     # Where to save the results?
-    LOGFILENAME = os.path.join(LOGFILEDIR, module_name + ".jsonl")
     # (default: experiments/MODULE_NAME.jsonl)
-    # ----------------------------------------------------------------------- #
+    logfilename = os.path.join(LOGFILEDIR, module_name + ".jsonl")
 
     # Let the science begin! #uwu
     bar_grid = tqdm(grid, desc="Parameter combinations", position=2, dynamic_ncols=True)
@@ -59,23 +40,47 @@ def main():
         # begin experiments for this parameter combination:
         accuracies = []
         bar_folds = tqdm(folds, desc="Cross-validation", position=1, leave=False, dynamic_ncols=True)
-        for i, fold in enumerate(bar_folds, start=first_fold):
-            accuracy = experiment(params, (i, fold), model_class, LOGFILENAME)
+        for i, fold in enumerate(bar_folds, start=first_fold_id):
+            accuracy = experiment(params, (i, fold), model_class, logfilename)
             tqdm.write(f"Test {i} of {params} complete. Fold accuracy: {accuracy:.2%}")
             accuracies.append(accuracy)
         # experiments done! compute the average result over folds
         avg_accuracy = sum(accuracies)/len(accuracies)
         tqdm.write(f"Finished testing {params}. Mean accuracy from {N_SPLITS} folds: {avg_accuracy:.2%}")
 
-def experiment(params, fold, model_class, logfilename):
+def parse_args(args):
+    # which folds should we test? shallow or deep search?
+    first_fold_id, last_fold_id = map(int, args[0].split('-'))
+    print("Experimenting with folds", first_fold_id, "to", last_fold_id, "inclusive")
+    folds = FOLDS[first_fold_id-1:last_fold_id] # from 1-based to 0-based
+    
+    # which model to experiment with?
+    module_name = args[1]
+    print("Model:", module_name)
+    model_class = importlib.import_module(module_name).Model
+
+    # what values of hyperparameters define the grid?
+    # keys: hyper parameter names, values: list of values for hyper parameters
+    # turns ["L=300,400,500", "n=3,4,5"] into a {"L": ["300", ...], "n": ["3", ...]}
+    grid_spec = {arg.split("=")[0]: arg.split("=")[1].split(",") for arg in args[2:]}
+    print("Grid spec", grid_spec)
+    grid = model_selection.ParameterGrid(grid_spec)
+
+    return first_fold_id, folds, module_name, model_class, grid
+
+def experiment(params, fold, model_class, logfilename, show_progress_bars=True):
     # unpack the data split for this experiment
     fold_id, (train_ids, test_ids) = fold
 
+    train_data, test_data = DATA[train_ids], DATA[test_ids]
+
     # train and evalute the model on this data split:
-    bar_train = tqdm(DATA[train_ids], desc="Training...", position=0, leave=False, dynamic_ncols=True)
-    model = model_class(bar_train, **params)
-    bar_eval = tqdm(DATA[test_ids], desc="Evaluating...", position=0, leave=False, dynamic_ncols=True)
-    accuracy, *_ = eval.evaluate(model, bar_eval)
+    if show_progress_bars:
+        train_data = tqdm(train_data, desc="Training...", position=0, leave=False, dynamic_ncols=True)
+    model = model_class(train_data, **params)
+    if show_progress_bars:
+        test_data = tqdm(test_data, desc="Evaluating...", position=0, leave=False, dynamic_ncols=True)
+    accuracy, *_ = eval.evaluate(model, test_data)
 
     # don't forget to record the results to the log file!
     with open(logfilename, 'a') as logfile:
