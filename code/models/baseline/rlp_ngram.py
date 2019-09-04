@@ -12,13 +12,21 @@ class Model:
         self.n = int(n)
         self.L = int(L)
 
-        self.ngrams = defaultdict(_ddictpickle) # {handle: {ngram: count, ...}, ...}
+        # {handle: {ngram: count, ...}, ...}
         # After triming converted to {handle: set(top_L_ngrams)}
+        self.ngrams = defaultdict(_ddictpickle) 
+        
+        # {ngram: set(handles), ...} used for inverted index
+        self.invertedNgram = defaultdict(set) 
 
-        self.invertedNgram = defaultdict(set) # {ngram: set(handles), ...} used for inverted index
+        # {handle: num_tweets, ...} used for tie breakers
+        self.num_tweets = defaultdict(int)
 
+        # {ngram: mean frequency, ...}
         self.meanFrequencies = defaultdict(float)
+
         for t in tqdm(data):
+            self.num_tweets[t.handle] += 1
             for ng in t.char_ngram(self.n):
                 self.ngrams[t.handle][ng] += 1
                 self.meanFrequencies[ng] += 1
@@ -52,8 +60,6 @@ class Model:
     def predict(self, tweet):
         tweetGrams = tweet.char_ngram(self.n)
         tweetGramsCounter = Counter(tweetGrams)
-        
-
 
         distances = defaultdict(int)
 
@@ -72,7 +78,13 @@ class Model:
         if len(distances) == 0:
             return "?????" # unknown 
 
+        _, dist = min(distances.items(), key = lambda x: x[1])
 
-
-        return max(distances.items(), key = lambda x: x[1])[0]
+        # of the authors with distance `dist`, predict the author with the most tweets
+        predicted_author = (None, 0) # (handle, tweet count)
+        for h in distances:
+            if distances[h] == dist:
+                if self.num_tweets[h] > predicted_author[1]:
+                    predicted_author = (h, self.num_tweets[h])
+        return predicted_author[0]
 
