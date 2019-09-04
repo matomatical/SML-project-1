@@ -16,7 +16,7 @@ def main():
     print("Model:", module_name, hyper_parameters)
 
     print("Labelling unlabelled tweets...")
-    for tweet in tqdm(data.TEST):
+    for tweet in tqdm(data.TEST, dynamic_ncols=True):
         tweet.handle = model.predict(tweet)
 
     print("Saving submission...")

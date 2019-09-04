@@ -13,11 +13,11 @@ def main():
     hyper_parameters = models.parse_hyper_parameters(sys.argv[2:])
     model = models.load(module_name, hyper_parameters)
 
-    data.load_devel()
+    data.load_devel1000()
 
     print("Model:", module_name, hyper_parameters)
 
-    accuracy, correct, tests = evaluate(model, tqdm(data.DEVEL, dynamic_ncols=True))
+    accuracy, correct, tests = evaluate(model, tqdm(data.DEVEL1000, dynamic_ncols=True))
 
     print(f"Label accuracy: {correct}/{tests} ({accuracy:%})")
 

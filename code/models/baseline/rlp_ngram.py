@@ -1,7 +1,6 @@
 import numpy as np
 from collections import defaultdict, Counter
-import time
-from tqdm import tqdm
+
 
 def _ddictpickle(): # needed to pickle the module
     return defaultdict(int)
@@ -25,7 +24,7 @@ class Model:
         # {ngram: mean frequency, ...}
         self.meanFrequencies = defaultdict(float)
 
-        for t in tqdm(data):
+        for t in data:
             self.num_tweets[t.handle] += 1
             for ng in t.char_ngram(self.n):
                 self.ngrams[t.handle][ng] += 1
