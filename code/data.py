@@ -13,6 +13,14 @@ class Tweet:
     def __str__(self):
         return f'@{self.handle} says: "{self.raw_text}"'
 
+    def ngram(self, n, level, norm=True):
+        if level == "char":
+            return self.char_ngram(n, norm=norm)
+        if level == "word":
+            return self.word_ngram(n, norm=norm)
+        if level == "byte":
+            return self.byte_ngram(n, norm=norm)
+
     # includes option to use normalised text or not
     def char_ngram(self, n, norm=True):
         chosen_text = self.normalised_text if norm else self.raw_text
@@ -25,6 +33,10 @@ class Tweet:
         chosen_split = chosen_text.split()
         return [x for x in ngrams(chosen_split, n, pad_left=True, left_pad_symbol="STT", pad_right=True, right_pad_symbol="END")]
         
+    def byte_ngram(self, n, norm=True):
+        chosen_text = self.normalised_text if norm else self.raw_text
+        text_bytes = bytes(chosen_text, encoding="utf-8")
+        return list(ngrams(text_bytes, n, pad_left=True, left_pad_symbol=b' ', pad_right=True, right_pad_symbol=b' '))
 """
 functions for pre-processing tweets (split words/punctutation,
 normalise sparse features like URLs, and more)

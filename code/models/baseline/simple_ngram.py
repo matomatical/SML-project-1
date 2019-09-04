@@ -7,16 +7,12 @@ def _ddictpickle(): # needed to pickle the module
 
 
 class Model:
-    def __init__(self, data, n, L, norm):
+    def __init__(self, data, n, L, norm, level="char"):
 
         self.ngramLen = int(n)
         self.L = int(L)
-        if norm == "True":
-            self.norm = True
-        elif norm == "False":
-            self.norm = False
-        else:
-            raise Exception("Expected False or True for parameter norm")
+        self.norm = eval(norm)
+        self.level = level
 
         self.ngrams = defaultdict(_ddictpickle) # {handle: {ngram: count, ...}, ...}
         # After triming converted to {handle: set(top_L_ngrams)}
@@ -24,7 +20,7 @@ class Model:
         self.invertedNgram = defaultdict(set) # {ngram: set(handles), ...} used for inverted index
 
         for t in data:
-            for ng in t.char_ngram(self.ngramLen, norm=self.norm):
+            for ng in t.ngram(self.ngramLen, norm=self.norm, level=self.level):
                 self.ngrams[t.handle][ng] += 1
         
         self.trim(self.L)
@@ -48,7 +44,7 @@ class Model:
                 self.invertedNgram[g].add(handle)
 
     def predict(self, tweet):
-        tweetGrams = tweet.char_ngram(self.ngramLen, norm=self.norm)
+        tweetGrams = tweet.ngram(self.ngramLen, norm=self.norm, level=self.level)
         tweetGramsSet = set(tweetGrams)
 
         # {handle: count}
