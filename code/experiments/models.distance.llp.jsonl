@@ -1,0 +1,3 @@
+{"params": {"n": "5", "norm": "False", "smoothing": "lerp-0.55"}, "fold": 1, "accuracy": 0.31512643962083553, "time": 1567701641.0113227}
+{"params": {"n": "5", "norm": "False", "smoothing": "lerp-0.6"}, "fold": 1, "accuracy": 0.31521906937968935, "time": 1567701873.0152352}
+{"params": {"n": "5", "norm": "False", "smoothing": "lerp-0.5"}, "fold": 1, "accuracy": 0.31460153765399695, "time": 1567702155.492673}
