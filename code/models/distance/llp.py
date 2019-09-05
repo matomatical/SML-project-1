@@ -19,7 +19,7 @@ class Model:
         # self.author_ntweets :: {author: number of tweets}
         self.author_ntweets = defaultdict(int)
         for tweet in data:
-            ngrams = tweet.char_ngram(n=self.n, norm=self.useNormalised)
+            ngrams = tweet.ngram(n=self.n, norm=self.useNormalised, level=self.level)
             self.author_counts[tweet.handle].update(ngrams)
             self.corpus_counts.update(ngrams)
             self.author_ntweets[tweet.handle] += 1
@@ -53,25 +53,28 @@ class Model:
 
     def predict(self, tweet):
         # featurise the tweet
-        ngrams = tweet.char_ngram(n=self.n, norm=self.useNormalised)
+        ngrams = tweet.ngram(n=self.n, norm=self.useNormalised, level=self.level)
         counts = Counter(ngrams)
         
-        # find the nearest author according to log-probability distance metric
+        # find the nearest author according to negative log-probability distance metric
         best_author, best_distance = "??????", math.inf
         for author in self.authors:
-            distance = 0
+            probs = self.author_probs[author]
+            # begin with negative log prior probability
+            prior_prob = self.author_prior[author]
+            distance = -math.log(prior_prob)
+            # compute remaining distance as sum of negative log probabilities
             for ngram, count in counts.items():
                 # skip ngrams unseen during testing
                 # TODO: treat 'UNK' ngrams specially?
                 if ngram not in self.corpus_probs:
                     continue
-                prob_author_ngram = self.author_probs[author][ngram]
+                prob_author_ngram = probs[ngram]
                 if prob_author_ngram == 0:
                     distance = math.inf
                     break
-                distance += count * -math.log(prob_author_ngram)
-            prior_prob = self.author_prior[author]
-            distance += -math.log(prior_prob)
+                distance -= count * math.log(prob_author_ngram)
+            # retain the smallest distance for prediction
             if distance < best_distance:
                 best_author, best_distance = author, distance
         
