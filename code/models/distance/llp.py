@@ -3,12 +3,11 @@ from enum import Enum
 from collections import defaultdict, Counter
 
 class Model:
-    def __init__(self, data, n, level="char", smoothing="add-0", bag="True", prior="True", norm="True"):
+    def __init__(self, data, n, level="char", smoothing="none", prior="True", norm="True"):
         self.n = int(n)
         self.level = level
         self._interpret_smoothing(smoothing)
         self.useNormalised = eval(norm)
-        self.useBagOfWords = eval(bag)
         self.usePriorDist  = eval(prior)
 
         # collect raw counts
@@ -48,9 +47,6 @@ class Model:
             self.author_probs[author] = self._smoothed_probs(profile, nngrams)
             self.author_nngrams[author] = nngrams
 
-        # construct inverted index for quicker querying later
-        # TODO
-
     def predict(self, tweet):
         # featurise the tweet
         ngrams = tweet.ngram(n=self.n, norm=self.useNormalised, level=self.level)
@@ -60,9 +56,12 @@ class Model:
         best_author, best_distance = "??????", math.inf
         for author in self.authors:
             probs = self.author_probs[author]
-            # begin with negative log prior probability
-            prior_prob = self.author_prior[author]
-            distance = -math.log(prior_prob)
+            if self.usePriorDist:
+                # begin with negative log prior probability
+                prior_prob = self.author_prior[author]
+                distance = -math.log(prior_prob)
+            else:
+                distance = 0
             # compute remaining distance as sum of negative log probabilities
             for ngram, count in counts.items():
                 # skip ngrams unseen during testing
