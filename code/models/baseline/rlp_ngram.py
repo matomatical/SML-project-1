@@ -1,3 +1,4 @@
+import ast
 import numpy as np
 from collections import defaultdict, Counter
 
@@ -6,10 +7,12 @@ def _ddictpickle(): # needed to pickle the module
     return defaultdict(int)
 
 class Model:
-    def __init__(self, data, n, L):
+    def __init__(self, data, n, L, level, norm):
 
         self.n = int(n)
         self.L = int(L)
+        self.level = level
+        self.norm = ast.literal_eval(norm)
 
         # {handle: {ngram: count, ...}, ...}
         # After triming converted to {handle: set(top_L_ngrams)}
@@ -26,7 +29,7 @@ class Model:
 
         for t in data:
             self.num_tweets[t.handle] += 1
-            for ng in t.char_ngram(self.n):
+            for ng in t.ngram(self.n, self.level, norm=self.norm):
                 self.ngrams[t.handle][ng] += 1
                 self.meanFrequencies[ng] += 1
 
@@ -36,7 +39,6 @@ class Model:
         
         self.trim(self.L)
             
-
     # keep L most distinctive ngrams (including count?)
     def trim(self, L):
         recentered = {}
@@ -57,7 +59,7 @@ class Model:
                 self.invertedNgram[n].add((handle, n_f))
 
     def predict(self, tweet):
-        tweetGrams = tweet.char_ngram(self.n)
+        tweetGrams = tweet.ngram(self.n, self.level, norm = self.norm)
         tweetGramsCounter = Counter(tweetGrams)
 
         distances = defaultdict(int)
