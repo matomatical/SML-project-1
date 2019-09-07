@@ -86,7 +86,9 @@ class Model:
         elif smoothing.startswith("lerp"):
             self.smoothing = Smoothing.INTERPOLATION
             self.alpha = float(smoothing.split("-")[1])
-            self.one_minus_alpha = 1 - self.alpha
+        elif smoothing.startswith("elerp"):
+            self.smoothing = Smoothing.EXPONENTIAL_INTERPOLATION
+            self.k = float(smoothing.split("-")[1])
         elif smoothing.startswith("none"):
             self.smoothing = Smoothing.NONE
 
@@ -101,12 +103,17 @@ class Model:
         elif self.smoothing == Smoothing.INTERPOLATION:
             probs = ProbabilityDistribution(dict_divide(profile, nngrams))
             return InterpolatedProbabilityDistribution(self.alpha, probs, self.corpus_probs)
+        elif self.smoothing == Smoothing.EXPONENTIAL_INTERPOLATION:
+            probs = ProbabilityDistribution(dict_divide(profile, nngrams))
+            alpha = math.exp(-nngrams / self.k)
+            return InterpolatedProbabilityDistribution(alpha, probs, self.corpus_probs)
 
 
 class Smoothing(Enum):
     NONE = 0
     LAPLACIAN = 1
     INTERPOLATION = 2
+    EXPONENTIAL_INTERPOLATION = 3
 
 class ProbabilityDistribution:
     def __init__(self, dist):

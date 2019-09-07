@@ -72,3 +72,31 @@ k      n=2   n=3   n=4    n=5   n=6
 0.01               214
 0.1                164
 1.0                118
+
+Neat!
+
+how about exponential smoothing?
+
+n=4, norm=False, varying k
+
+k     acc
+100    52
+300    80
+500   110
+1000  160
+2000  225
+3000  254
+3500  265
+4000  270
+5000  280
+7500  287
+8500  289
+10K   294 * the highest it can go? aww....
+11.5K 291
+13.5K 286
+15K   285
+20K   284
+25K   282
+30K   287 how high can it go?
+40K   282
+50K   277 on the way back down!?
