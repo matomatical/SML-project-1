@@ -793,3 +793,27 @@
 {"params": {"L": "1100", "level": "byte", "n": "8", "norm": "False"}, "fold": 6, "accuracy": 0.20727452372865657, "time": 1567732650.1766763}
 {"params": {"L": "1100", "level": "byte", "n": "8", "norm": "False"}, "fold": 7, "accuracy": 0.2056135367133947, "time": 1567732656.7837594}
 {"params": {"L": "1100", "level": "byte", "n": "8", "norm": "False"}, "fold": 8, "accuracy": 0.20462545544371025, "time": 1567732790.2512817}
+{"params": {"L": "400", "level": "char", "n": "4", "norm": "False", "ties": "prior"}, "fold": 5, "accuracy": 0.21088708432395714, "time": 1567839822.2185395}
+{"params": {"L": "400", "level": "char", "n": "4", "norm": "False", "ties": "prior"}, "fold": 1, "accuracy": 0.21240003705190355, "time": 1567839822.5838609}
+{"params": {"L": "400", "level": "char", "n": "4", "norm": "False", "ties": "prior"}, "fold": 2, "accuracy": 0.2117207521536419, "time": 1567839822.6200328}
+{"params": {"L": "400", "level": "char", "n": "4", "norm": "False", "ties": "prior"}, "fold": 6, "accuracy": 0.20992991014913392, "time": 1567839822.6503634}
+{"params": {"L": "400", "level": "char", "n": "4", "norm": "False", "ties": "prior"}, "fold": 4, "accuracy": 0.2062555963812641, "time": 1567839822.936833}
+{"params": {"L": "400", "level": "char", "n": "4", "norm": "False", "ties": "prior"}, "fold": 3, "accuracy": 0.2120603946027727, "time": 1567839827.4607408}
+{"params": {"L": "400", "level": "char", "n": "5", "norm": "False", "ties": "prior"}, "fold": 2, "accuracy": 0.21329545805415753, "time": 1567840112.0671155}
+{"params": {"L": "400", "level": "char", "n": "5", "norm": "False", "ties": "prior"}, "fold": 3, "accuracy": 0.21530243616265785, "time": 1567840112.8893533}
+{"params": {"L": "400", "level": "char", "n": "5", "norm": "False", "ties": "prior"}, "fold": 1, "accuracy": 0.21558032543921943, "time": 1567840113.925942}
+{"params": {"L": "400", "level": "char", "n": "5", "norm": "False", "ties": "prior"}, "fold": 4, "accuracy": 0.20854046376632598, "time": 1567840116.8156955}
+{"params": {"L": "400", "level": "char", "n": "4", "norm": "False", "ties": "prior"}, "fold": 7, "accuracy": 0.20928796393503366, "time": 1567840218.6835794}
+{"params": {"L": "400", "level": "char", "n": "4", "norm": "False", "ties": "prior"}, "fold": 8, "accuracy": 0.20694127091953313, "time": 1567840220.3055944}
+{"params": {"L": "400", "level": "char", "n": "5", "norm": "False", "ties": "prior"}, "fold": 6, "accuracy": 0.2117207521536419, "time": 1567840401.4634702}
+{"params": {"L": "400", "level": "char", "n": "5", "norm": "False", "ties": "prior"}, "fold": 5, "accuracy": 0.21338808781301138, "time": 1567840402.051713}
+{"params": {"L": "400", "level": "char", "n": "5", "norm": "False", "ties": "prior"}, "fold": 7, "accuracy": 0.21178904464892237, "time": 1567840402.2540317}
+{"params": {"L": "400", "level": "char", "n": "5", "norm": "False", "ties": "prior"}, "fold": 8, "accuracy": 0.21154202433150127, "time": 1567840411.1414466}
+{"params": {"L": "400", "level": "char", "n": "6", "norm": "False", "ties": "prior"}, "fold": 1, "accuracy": 0.21366597708957297, "time": 1567840452.0247133}
+{"params": {"L": "400", "level": "char", "n": "6", "norm": "False", "ties": "prior"}, "fold": 2, "accuracy": 0.21135023311822645, "time": 1567840453.519275}
+{"params": {"L": "400", "level": "char", "n": "6", "norm": "False", "ties": "prior"}, "fold": 3, "accuracy": 0.21372773026214223, "time": 1567840636.0122256}
+{"params": {"L": "400", "level": "char", "n": "6", "norm": "False", "ties": "prior"}, "fold": 4, "accuracy": 0.20742890666007965, "time": 1567840636.2846575}
+{"params": {"L": "400", "level": "char", "n": "6", "norm": "False", "ties": "prior"}, "fold": 5, "accuracy": 0.21215302436162659, "time": 1567840638.2943442}
+{"params": {"L": "400", "level": "char", "n": "6", "norm": "False", "ties": "prior"}, "fold": 6, "accuracy": 0.2102077994256955, "time": 1567840645.2205071}
+{"params": {"L": "400", "level": "char", "n": "6", "norm": "False", "ties": "prior"}, "fold": 7, "accuracy": 0.20968937195084295, "time": 1567840681.078425}
+{"params": {"L": "400", "level": "char", "n": "6", "norm": "False", "ties": "prior"}, "fold": 8, "accuracy": 0.20758969925276355, "time": 1567840682.642011}

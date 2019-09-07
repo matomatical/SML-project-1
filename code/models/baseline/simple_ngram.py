@@ -7,19 +7,26 @@ def _ddictpickle(): # needed to pickle the module
 
 
 class Model:
-    def __init__(self, data, n, L, norm, level="char"):
+    def __init__(self, data, n, L, norm, level="char", ties="none"):
 
         self.ngramLen = int(n)
         self.L = int(L)
         self.norm = eval(norm)
         self.level = level
+        if ties == "none":
+            self.tiebreak = False
+        elif ties == "prior":
+            self.tiebreak = True
 
         self.ngrams = defaultdict(_ddictpickle) # {handle: {ngram: count, ...}, ...}
         # After triming converted to {handle: set(top_L_ngrams)}
 
         self.invertedNgram = defaultdict(set) # {ngram: set(handles), ...} used for inverted index
+        
+        self.ntweets = defaultdict(int)
 
         for t in data:
+            self.ntweets[t.handle] += 1
             for ng in t.ngram(self.ngramLen, norm=self.norm, level=self.level):
                 self.ngrams[t.handle][ng] += 1
         
@@ -62,5 +69,8 @@ class Model:
             return "?????" # unknown 
         
         # print(match)
-        return max(matches.items(), key = lambda x: x[1])[0]
-        # return sorted(matches.items(), key = lambda x : x[1], reverse = True)[0]
+        if not self.tiebreak:
+            return max(matches.items(), key = lambda x: x[1])[0]
+            # return sorted(matches.items(), key = lambda x : x[1], reverse = True)[0]
+        else:
+            return max(matches.items(), key = lambda x: (x[1], self.ntweets[x[0]]))[0]
