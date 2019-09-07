@@ -1,5 +1,6 @@
 import numpy as np
 from collections import defaultdict
+import heapq
 
 
 def _ddictpickle(): # needed to pickle the module
@@ -43,7 +44,7 @@ class Model:
             for g in hg[1]:
                 self.invertedNgram[g].add(handle)
 
-    def predict(self, tweet):
+    def predict(self, tweet, topk=None, scores=False):
         tweetGrams = tweet.ngram(self.ngramLen, norm=self.norm, level=self.level)
         tweetGramsSet = set(tweetGrams)
 
@@ -59,8 +60,24 @@ class Model:
                 matches[h] += 1
         
         if len(matches) == 0:
-            return "?????" # unknown 
+            if topk is None:
+                return "?????" # unknown
+            else:
+                return []
         
-        # print(match)
-        return max(matches.items(), key = lambda x: x[1])[0]
+        # add more flexible output modes for ensemble methods
+        # (default behaviour remains the same)
+        if topk is None:
+            best_pair = max(matches.items(), key=lambda x: x[1])
+            if scores:
+                return best_pair
+            else:
+                return best_pair[0]
+        else:
+            best_pairs = heapq.nlargest(topk, matches.items(), key=lambda x: x[1])
+            if scores:
+                return best_pairs
+            else:
+                return [handle for handle, score in best_pairs]
+        # return max(matches.items(), key = lambda x: x[1])[0]
         # return sorted(matches.items(), key = lambda x : x[1], reverse = True)[0]
