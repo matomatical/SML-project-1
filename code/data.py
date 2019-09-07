@@ -13,6 +13,20 @@ class Tweet:
     def __str__(self):
         return f'@{self.handle} says: "{self.raw_text}"'
 
+    def get_ngram(self, n, norm=True, method="char_ngram"):
+        if method == "char_ngram":
+            chosen_text = self.normalised_text if norm else self.raw_text
+            return [''.join(x) for x in ngrams(chosen_text, n, pad_left=True, left_pad_symbol=" ", pad_right=True, right_pad_symbol=" ")]
+        elif method == "word_ngram":
+            chosen_text = self.normalised_text if norm else self.raw_text
+            # chosen_text = re.sub(r"[\W]+", " ", chosen_text) # Might be good to remove punctuations, brackets etc from the word gram, as they're captured in the char gram
+            # chosen_text = re.sub(r"[\[\\\^\.\|\?\(\),<>/;:'\"{}~`]", " ", chosen_text).split() # "purifies" the string so it's just words. probably. 
+            chosen_split = chosen_text.split()
+            return [x for x in ngrams(chosen_split, n, pad_left=True, left_pad_symbol="STT", pad_right=True, right_pad_symbol="END")]
+        else: 
+            raise NotImplementedError(method + " in Tweet.ngram")
+        
+
     # includes option to use normalised text or not
     def char_ngram(self, n, norm=True):
         chosen_text = self.normalised_text if norm else self.raw_text
