@@ -46,3 +46,5 @@
 {"params": {"L": "1000", "n": "5", "ngram_method": "char_ngram", "norm": "False"}, "fold": 1, "accuracy": 0.24126964522802358, "time": 1567723060.562418}
 {"params": {"L": "1000", "n": "5", "ngram_method": "word_ngram", "norm": "True"}, "fold": 1, "accuracy": 0.1577793559144101, "time": 1567723245.900558}
 {"params": {"L": "1000", "n": "5", "ngram_method": "word_ngram", "norm": "False"}, "fold": 1, "accuracy": 0.15342575724827864, "time": 1567723323.2951648}
+
+

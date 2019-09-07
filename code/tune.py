@@ -46,7 +46,7 @@ def main():
             accuracies.append(accuracy)
         # experiments done! compute the average result over folds
         avg_accuracy = sum(accuracies)/len(accuracies)
-        tqdm.write(f"Finished testing {params}. Mean accuracy from {N_SPLITS} folds: {avg_accuracy:.2%}")
+        tqdm.write(f"Finished testing {params}. Mean accuracy from {len(folds)} folds: {avg_accuracy:.2%}")
 
 def parse_args(args):
     # which folds should we test? shallow or deep search?

@@ -7,11 +7,11 @@ def _ddictpickle(): # needed to pickle the module
     return defaultdict(int)
 
 class Model:
-    def __init__(self, data, n, L, ngram_method, norm):
+    def __init__(self, data, n, L, level, norm):
 
         self.n = int(n)
         self.L = int(L)
-        self.ngram_method = ngram_method 
+        self.level = level
         self.norm = ast.literal_eval(norm)
 
         # {handle: {ngram: count, ...}, ...}
@@ -29,7 +29,7 @@ class Model:
 
         for t in data:
             self.num_tweets[t.handle] += 1
-            for ng in t.get_ngram(self.n, method=self.ngram_method, norm=self.norm):
+            for ng in t.ngram(self.n, self.level, norm=self.norm):
                 self.ngrams[t.handle][ng] += 1
                 self.meanFrequencies[ng] += 1
 
@@ -59,7 +59,7 @@ class Model:
                 self.invertedNgram[n].add((handle, n_f))
 
     def predict(self, tweet):
-        tweetGrams = tweet.get_ngram(self.n, method = self.ngram_method, norm = self.norm)
+        tweetGrams = tweet.ngram(self.n, self.level, norm = self.norm)
         tweetGramsCounter = Counter(tweetGrams)
 
         distances = defaultdict(int)
