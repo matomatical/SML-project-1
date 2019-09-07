@@ -1,8 +1,21 @@
-import csv
-from nltk import ngrams
+"""
+data module: utilities for loading, representing,
+pre-processing and processing our twitter data
+(assumed to exist in ../data/ directory)
+"""
+
 import re
+import sys
+import csv
+import pickle
+from enum import Enum 
+from collections import defaultdict
+
+from nltk import ngrams
+
 
 class Tweet:
+    """Our internal representation of a tweet: a handle and text"""
     def __init__(self, handle, text):
         self.handle = handle
         self.raw_text = text
@@ -20,6 +33,8 @@ class Tweet:
             return self.word_ngram(n, norm=norm)
         if level == "byte":
             return self.byte_ngram(n, norm=norm)
+        if level == "flex":
+            return self.flexible_pattern(n, norm=norm)
 
     # includes option to use normalised text or not
     def char_ngram(self, n, norm=True):
@@ -28,8 +43,6 @@ class Tweet:
 
     def word_ngram(self, n, norm=True):
         chosen_text = self.normalised_text if norm else self.raw_text
-        # chosen_text = re.sub(r"[\W]+", " ", chosen_text) # Might be good to remove punctuations, brackets etc from the word gram, as they're captured in the char gram
-        # chosen_text = re.sub(r"[\[\\\^\.\|\?\(\),<>/;:'\"{}~`]", " ", chosen_text).split() # "purifies" the string so it's just words. probably. 
         chosen_split = chosen_text.split()
         return [x for x in ngrams(chosen_split, n, pad_left=True, left_pad_symbol="STT", pad_right=True, right_pad_symbol="END")]
         
@@ -37,6 +50,109 @@ class Tweet:
         chosen_text = self.normalised_text if norm else self.raw_text
         text_bytes = bytes(chosen_text, encoding="utf-8")
         return list(ngrams(text_bytes, n, pad_left=True, left_pad_symbol=b' ', pad_right=True, right_pad_symbol=b' '))
+
+    USED_FLEX_PATTERNS = False
+    def flexible_pattern(self, n, norm=True):
+        if not Tweet.USED_FLEX_PATTERNS:
+            if not norm:
+                print("[data.py] WARNING: Flexible patterns do not support un-normalised mode. Using normalised flexible patterns instead")
+            load_hfw()
+            Tweet.USED_FLEX_PATTERNS = True
+        return flexible_patterns(self, lo=n-1, hi=n)
+
+
+
+"""
+functions defining flexible patterns
+YOU MUST FIRST RUN FLEXIBLE_PATTERNS.PY TO COUNT HIGH FREQUENCY WORDS
+"""
+ 
+class Label(Enum):
+  HFW = 0;
+  CW = 1
+  def __repr__(self):
+    return self.name
+  def __str__(self):
+    return self.name
+
+HFW = Label.HFW
+CW  = Label.CW
+
+class FlexiblePattern:
+  # pattern is a tuple of (word, label) tuples
+  def __init__(self, pattern):
+    # self.pattern = ("hfw1", CW, CW, "hfw2", CW, "hfw3") (for example)
+    # tuple of words where words labeled by CW are replaced by the label
+    self.pattern = []
+    for word, label in pattern:
+      if label == HFW:
+        self.pattern.append(word)
+      else:
+        self.pattern.append(CW)
+    self.pattern = tuple(self.pattern)
+
+  def __repr__(self):
+    return 'FlexiblePattern(' + " ".join(map(str, self.pattern)) + ')'
+
+  def __eq__(self, other):
+    return self.pattern == other.pattern
+  def __hash__(self):
+    return hash(self.pattern)
+  
+  def tokenise_cw(self):
+    tokenised = []
+    for word, label in self.pattern:
+      if label == HFW:
+        tokenised.append(word)
+      else:
+        tokenised.append(CW)
+    return tuple(tokenised)
+
+
+HFW_SET = None
+
+def load_hfw():
+    global HFW_SET
+    if HFW_SET is None:
+        print("[data.py] Loading ../data/hfws.pickle into HFW_SET")
+        try:
+            with open('../data/hfws.pickle', 'rb') as file:
+                HFW_SET = pickle.load(file)
+        except Exception as e:
+            print("Error!", e) 
+            print("(did you run flexible_patterns.py to generate this data file?)")
+
+
+def flexible_patterns(tweet, lo=2, hi=6):
+  modified_list = [] # list of (word, label) tuples
+  for word in tweet.normalised_text.lower().split():
+    if word in HFW_SET:
+      modified_list.append((word, HFW))
+    else:
+      modified_list.append((word, CW))
+
+  flexible_patterns = []
+  for i in range(len(modified_list)):
+    _, label = modified_list[i]
+
+    if label == HFW:
+      HFW_count = 1
+      j = i+1
+
+      # creates a flexible pattern of the next "n" HFW, where lo < n < hi
+      while j < len(modified_list) and HFW_count < hi:
+        _, label = modified_list[j]
+        if label == HFW:
+          HFW_count += 1
+          if HFW_count > lo:
+            flexible_patterns.append(FlexiblePattern(tuple(modified_list[i:j+1])))
+        j += 1
+  
+  return flexible_patterns
+
+
+
+
 """
 functions for pre-processing tweets (split words/punctutation,
 normalise sparse features like URLs, and more)
@@ -95,10 +211,12 @@ def normalise(tweet_text):
     return normalised_text
 
 
+
 """
 Load the data, lazily
 """
 TRAIN = None
+ALL_TRAIN = None
 DEVEL = None
 TEST  = None
 DEVEL1000 = None
@@ -110,6 +228,14 @@ def load_train():
         with open('../data/traditional_split/training_tweets.txt') as file:
             TRAIN = [Tweet(*line.strip().split('\t')) for line in file]
 
+def load_all_train():
+    global ALL_TRAIN
+    if ALL_TRAIN is None:
+        print("[data.py] Loading ../data/training_tweets.txt into ALL_TRAIN")
+        with open('../data/traditional_split/training_tweets.txt') as file:
+            ALL_TRAIN = [Tweet(*line.strip().split('\t')) for line in file]
+        
+
 def load_devel():
     global DEVEL
     if DEVEL is None:
@@ -120,7 +246,7 @@ def load_devel():
 def load_devel1000():
     global DEVEL1000
     if DEVEL1000 is None:
-        print("[data.py] Loading ../data/traditional_split/1000_dev_tweets.txt into DEVEL")
+        print("[data.py] Loading ../data/traditional_split/1000_dev_tweets.txt into DEVEL1000")
         with open('../data/traditional_split/1000_dev_tweets.txt') as file:
             DEVEL1000 = [Tweet(*line.strip().split('\t')) for line in file]
 
@@ -142,3 +268,4 @@ def export(filename, tweets):
         out = csv.writer(outfile)
         out.writerow(['Id', 'Predicted'])
         out.writerows(enumerate((tweet.handle for tweet in tweets), 1))
+
