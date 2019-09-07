@@ -79,8 +79,7 @@ class Model:
         Ks = {} # {handle: distance, ...}
         for ng in sp2:
             # print(ng)
-            if ng in self.invertedNgrams:
-                # print("PPPPe")
+            if ng in self.invertedNgrams: 
                 for handle,_ in self.invertedNgrams[ng].items():
                     if handle not in seen:
                         seen.add(handle)
@@ -101,16 +100,15 @@ class Model:
         T = len(sp2)
         N = sp1.intersection(sp2)
 
-        k = (L + T - 2 * len(N)) * 4
+        k = 0
 
         for x in N:
-            k += ((2 * p1[x] - p2[x]) / (p1[x] + p2[x]) ** 2)
+            k += ((2 * p1[x] - p2[x]) / (p1[x] + p2[x])) ** 2
 
-        return k
+        return (L + T - 2 * len(N)) * 4 + k
 
 
     def predict(self, tweet):
-        final_prediction = 0
         p2 = {} # Accessing by an index in default dict creates an entry with value 0, so don't use it
         p2_total = 0
         sp2 = set()
@@ -122,7 +120,19 @@ class Model:
         for ngram, count in p2.items():
             p2[ngram] = count/p2_total
 
+        # DISTANCE METHOD 1
         distances = self.distances(p2, sp2)
+        #=====
+
+        # DISTANCE METHOD 2
+        # distances = {}
+        # for h, p1 in self.ngrams.items():
+        #     sp1 = self.sets[h]
+        #     distances[h] = self.distance2(p1, sp1, p2, sp2)
+        #=====
+
+        if len(distances) == 0:
+            distances = {'?????': 0}
 
         _, dist = min(distances.items(), key = lambda x: x[1])
 
@@ -133,19 +143,4 @@ class Model:
                 if self.num_tweets[h] > predicted_author[1]:
                     predicted_author = (h, self.num_tweets[h])
         return predicted_author[0]
-
-        # h_min = '0'
-        # k_min = 999999999
-
-        # # for h, sp1 in self.sets.items():
-        # for h, p1 in self.ngrams.items():
-        #     # print(h)
-        #     # k_curr = self.distance(self.ngrams[h], sp1, p2, sp2)
-        #     sp1 = self.sets[h]
-        #     k_curr = self.distance2(p1, sp1, p2, sp2)
-        #     if k_curr < k_min:
-        #         h_min = h
-        #         k_min = k_curr
-        #         # print(k_curr)
-        # return h_min
         
