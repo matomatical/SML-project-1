@@ -34,7 +34,7 @@ class Tweet:
         if level == "byte":
             return self.byte_ngram(n, norm=norm)
         if level == "flex":
-            return self.flexible_pattern(n, norm=norm)
+            return self.flexible_pattern(n, n, norm=norm)
 
     # includes option to use normalised text or not
     def char_ngram(self, n, norm=True):
@@ -52,13 +52,13 @@ class Tweet:
         return list(ngrams(text_bytes, n, pad_left=True, left_pad_symbol=b' ', pad_right=True, right_pad_symbol=b' '))
 
     USED_FLEX_PATTERNS = False
-    def flexible_pattern(self, n, norm=True):
+    def flexible_pattern(self, min_n, max_n, hfws=None, norm=True):
         if not Tweet.USED_FLEX_PATTERNS:
             if not norm:
                 print("[data.py] WARNING: Flexible patterns do not support un-normalised mode. Using normalised flexible patterns instead")
             load_hfw()
             Tweet.USED_FLEX_PATTERNS = True
-        return flexible_patterns(self, lo=n-1, hi=n)
+        return flexible_patterns(self, lo=min_n-1, hi=max_n)
 
 
 
@@ -114,7 +114,6 @@ HFW_SET = None
 def load_hfw():
     global HFW_SET
     if HFW_SET is None:
-        print("[data.py] Loading ../data/hfws.pickle into HFW_SET")
         try:
             with open('../data/hfws.pickle', 'rb') as file:
                 HFW_SET = pickle.load(file)
