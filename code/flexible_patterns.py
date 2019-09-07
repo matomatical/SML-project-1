@@ -1,96 +1,36 @@
+import pickle
 from collections import defaultdict
-from data import Tweet
-import data; data.load_train(); TRAIN = data.TRAIN
 
-from enum import Enum 
- 
-class label(Enum):
-  HFW = 0;
-  CW = 1
+import data
+data.load_all_train()
+data.load_test()
 
-  def __repr__(self):
-    return self.name
-  
-  def __str__(self):
-    return self.name
+FLEXIBLE_PATTERN_RATIO = 1e-4
 
-HFW = label.HFW
-CW = label.CW
-
-class FlexiblePattern:
-  # pattern is a tuple of (word, label) tuples
-  def __init__(self, pattern):
-    self.pattern = pattern
-
-  def __repr__(self):
-    rep = []
-    for word, label in self.pattern:
-      if label == HFW:
-        rep.append(f"('{word}', HFW)")
-      else:
-        rep.append(f"('{word}', CW)")
-    str_rep = ", ".join(rep)
-    return f"({str_rep})"
-  
-  # tuple of words where words labeled by CW are replaced by the label
-  def tokenise_cw(self):
-    tokenised = []
-    for word, label in self.pattern:
-      if label == HFW:
-        tokenised.append(word)
-      else:
-        tokenised.append(CW)
-    return tuple(tokenised)
-  
-
-
-def generate_hfw(tweets=TRAIN):
+def main():
+  print("counting all words from the whole dataset...")
   word_freq = defaultdict(int)
+  total_num_words = 0
 
-  for tweet in tweets:
+  for tweet in data.ALL_TRAIN + data.TEST:
     for word in tweet.normalised_text.lower().split():
       word_freq[word] += 1
-  hfw_threshold = len(word_freq) * 10e-4
-
-  hfw = set() 
+      total_num_words += 1
+  print("counted!")
+  
+  print("defining high frequency words...")
+  hfw_threshold = total_num_words * FLEXIBLE_PATTERN_RATIO
+  hfw = set()
 
   for word in word_freq:
     if word_freq[word] > hfw_threshold:
       hfw.add(word)
   
-  return hfw
+  # save to file
+  print("saving to ../data/hfws.pickle...")
+  with open("../data/hfws.pickle", 'wb') as file:
+    pickle.dump(hfw, file)
+  print("done!")
 
-high_freq_words = generate_hfw()
-
-def flexible_patterns(tweet, lo=2, hi=6):
-  modified_list = [] # list of (word, label) tuples
-  for word in tweet.text.split():
-    if word.lower() in high_freq_words:
-      modified_list.append((word, HFW))
-    else:
-      modified_list.append((word, CW))
-
-  flexible_patterns = []
-  for i in range(len(modified_list)):
-    _, label = modified_list[i]
-
-    if label == HFW:
-      HFW_count = 1
-      j = i+1
-
-      # creates a flexible pattern of the next "n" HFW, where lo < n < hi
-      while j < len(modified_list) and HFW_count < hi:
-        _, label = modified_list[j]
-        if label == HFW:
-          HFW_count += 1
-          if HFW_count > lo:
-            flexible_patterns.append(FlexiblePattern(tuple(modified_list[i:j+1])))
-        j += 1
-  
-  return flexible_patterns
-
-
-
-
-  
-
+if __name__ == '__main__':
+    main()

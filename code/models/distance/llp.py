@@ -3,12 +3,11 @@ from enum import Enum
 from collections import defaultdict, Counter
 
 class Model:
-    def __init__(self, data, n, level="char", smoothing="add-0", bag="True", prior="True", norm="True"):
+    def __init__(self, data, n, level="char", smoothing="none", prior="True", norm="True"):
         self.n = int(n)
         self.level = level
         self._interpret_smoothing(smoothing)
         self.useNormalised = eval(norm)
-        self.useBagOfWords = eval(bag)
         self.usePriorDist  = eval(prior)
 
         # collect raw counts
@@ -19,7 +18,7 @@ class Model:
         # self.author_ntweets :: {author: number of tweets}
         self.author_ntweets = defaultdict(int)
         for tweet in data:
-            ngrams = tweet.char_ngram(n=self.n, norm=self.useNormalised)
+            ngrams = tweet.ngram(n=self.n, norm=self.useNormalised, level=self.level)
             self.author_counts[tweet.handle].update(ngrams)
             self.corpus_counts.update(ngrams)
             self.author_ntweets[tweet.handle] += 1
@@ -48,30 +47,33 @@ class Model:
             self.author_probs[author] = self._smoothed_probs(profile, nngrams)
             self.author_nngrams[author] = nngrams
 
-        # construct inverted index for quicker querying later
-        # TODO
-
     def predict(self, tweet):
         # featurise the tweet
-        ngrams = tweet.char_ngram(n=self.n, norm=self.useNormalised)
+        ngrams = tweet.ngram(n=self.n, norm=self.useNormalised, level=self.level)
         counts = Counter(ngrams)
         
-        # find the nearest author according to log-probability distance metric
+        # find the nearest author according to negative log-probability distance metric
         best_author, best_distance = "??????", math.inf
         for author in self.authors:
-            distance = 0
+            probs = self.author_probs[author]
+            if self.usePriorDist:
+                # begin with negative log prior probability
+                prior_prob = self.author_prior[author]
+                distance = -math.log(prior_prob)
+            else:
+                distance = 0
+            # compute remaining distance as sum of negative log probabilities
             for ngram, count in counts.items():
                 # skip ngrams unseen during testing
                 # TODO: treat 'UNK' ngrams specially?
                 if ngram not in self.corpus_probs:
                     continue
-                prob_author_ngram = self.author_probs[author][ngram]
+                prob_author_ngram = probs[ngram]
                 if prob_author_ngram == 0:
                     distance = math.inf
                     break
-                distance += count * -math.log(prob_author_ngram)
-            prior_prob = self.author_prior[author]
-            distance += -math.log(prior_prob)
+                distance -= count * math.log(prob_author_ngram)
+            # retain the smallest distance for prediction
             if distance < best_distance:
                 best_author, best_distance = author, distance
         
@@ -84,7 +86,9 @@ class Model:
         elif smoothing.startswith("lerp"):
             self.smoothing = Smoothing.INTERPOLATION
             self.alpha = float(smoothing.split("-")[1])
-            self.one_minus_alpha = 1 - self.alpha
+        elif smoothing.startswith("elerp"):
+            self.smoothing = Smoothing.EXPONENTIAL_INTERPOLATION
+            self.k = float(smoothing.split("-")[1])
         elif smoothing.startswith("none"):
             self.smoothing = Smoothing.NONE
 
@@ -99,12 +103,17 @@ class Model:
         elif self.smoothing == Smoothing.INTERPOLATION:
             probs = ProbabilityDistribution(dict_divide(profile, nngrams))
             return InterpolatedProbabilityDistribution(self.alpha, probs, self.corpus_probs)
+        elif self.smoothing == Smoothing.EXPONENTIAL_INTERPOLATION:
+            probs = ProbabilityDistribution(dict_divide(profile, nngrams))
+            alpha = math.exp(-nngrams / self.k)
+            return InterpolatedProbabilityDistribution(alpha, probs, self.corpus_probs)
 
 
 class Smoothing(Enum):
     NONE = 0
     LAPLACIAN = 1
     INTERPOLATION = 2
+    EXPONENTIAL_INTERPOLATION = 3
 
 class ProbabilityDistribution:
     def __init__(self, dist):

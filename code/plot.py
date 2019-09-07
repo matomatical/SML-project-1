@@ -2,6 +2,7 @@ import sys
 import json
 from statistics import mean
 from collections import defaultdict
+import numpy as np
 from cycler import cycler
 import matplotlib.pyplot as plt
 
@@ -19,20 +20,31 @@ def main():
         params = tuple(result['params'].items())
         collated_results[params].append((result['fold'], result['accuracy']))
     scored_results = defaultdict(dict)
+    full_params = {}
     for params, fold_accs in collated_results.items():
         L = [int(val) for key, val in params if key == "L"][0]
         desc = ', '.join('='.join(map(str, p)) for p in params if p[0] != "L")
         folds, accs = zip(*fold_accs)
         scored_results[desc][L] = mean(accs)
+        full_params[desc] = dict(params)
 
-    plt.rc('axes', prop_cycle=cycler(color=list('rgbkcym')) * cycler(linestyle=['-','--','-.',':']))
-    for desc, data in scored_results.items():
-        plt.plot(*zip(*sorted(data.items())), marker='*', label=desc)
-    plt.xlim(0, 1800)
+    proc_cycler = ( cycler(color=plt.rcParams['axes.prop_cycle'].by_key()['color'])
+                  * cycler(linestyle=['-','--','-.',':']))
+    plt.rc('axes', prop_cycle=proc_cycler)
+    plt.gcf().set_size_inches(8, 8.5)
+    for desc, data in sorted(scored_results.items()):
+        params = full_params[desc]
+        marker = '$' + params.get("level", "char")[0] + '$'
+        plt.plot(*zip(*sorted(data.items())), marker=marker, label=desc)
+    plt.gca().minorticks_on()
+    plt.gca().grid()
+    plt.gca().grid(which='minor', linestyle=":")
     plt.xlabel("L")
     plt.ylabel("Accuracy (%)")
-    plt.legend()
-    plt.show()
+    plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+    plt.tight_layout()
+    plt.savefig("Figure_1.pdf")
+    print("Figure saved to Figure_1.pdf")
 
 if __name__ == '__main__':
     main()
