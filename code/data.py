@@ -230,8 +230,8 @@ def load_train():
 def load_all_train():
     global ALL_TRAIN
     if ALL_TRAIN is None:
-        print("[data.py] Loading ../data/training_tweets.txt into ALL_TRAIN")
-        with open('../data/traditional_split/training_tweets.txt') as file:
+        print("[data.py] Loading ../data/train_tweets.txt into ALL_TRAIN")
+        with open('../data/train_tweets.txt') as file:
             ALL_TRAIN = [Tweet(*line.strip().split('\t')) for line in file]
         
 
