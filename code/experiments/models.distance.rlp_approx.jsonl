@@ -16,3 +16,16 @@
 {"params": {"L": "2000", "level": "char", "n": "6", "norm": "False"}, "fold": 1, "accuracy": 0.17439095933553586, "time": 1568020357.6421146}
 {"params": {"L": "2000", "level": "char", "n": "5", "norm": "False"}, "fold": 1, "accuracy": 0.18025751072961374, "time": 1568020758.2166204}
 {"params": {"L": "2000", "level": "char", "n": "4", "norm": "False"}, "fold": 1, "accuracy": 0.18578441967456077, "time": 1568021161.96539}
+{"params": {"L": "1500", "level": "char", "n": "5", "norm": "False"}, "fold": 1, "accuracy": 0.1796399790039213, "time": 1568025784.811302}
+{"params": {"L": "2500", "level": "char", "n": "5", "norm": "False"}, "fold": 1, "accuracy": 0.18090591904159076, "time": 1568026247.2202542}
+{"params": {"L": "1500", "level": "char", "n": "4", "norm": "False"}, "fold": 1, "accuracy": 0.18498162843116064, "time": 1568027409.7448583}
+{"params": {"L": "2500", "level": "char", "n": "4", "norm": "False"}, "fold": 1, "accuracy": 0.18569178991570692, "time": 1568027966.6215663}
+{"params": {"L": "3000", "level": "char", "n": "5", "norm": "False"}, "fold": 1, "accuracy": 0.1814308210084293, "time": 1568031654.2399857}
+{"params": {"L": "3000", "level": "char", "n": "4", "norm": "False"}, "fold": 1, "accuracy": 0.1859388026059839, "time": 1568033688.682444}
+{"params": {"L": "3500", "level": "char", "n": "5", "norm": "False"}, "fold": 1, "accuracy": 0.18189396980269862, "time": 1568036998.5206323}
+{"params": {"L": "3500", "level": "char", "n": "4", "norm": "False"}, "fold": 1, "accuracy": 0.1862784450551147, "time": 1568037005.904487}
+{"params": {"L": "3000", "level": "char", "n": "3", "norm": "False"}, "fold": 1, "accuracy": 0.1821718590792602, "time": 1568038254.1370273}
+{"params": {"L": "3500", "level": "char", "n": "3", "norm": "False"}, "fold": 1, "accuracy": 0.18223361225182944, "time": 1568038263.5350928}
+{"params": {"L": "4000", "level": "char", "n": "5", "norm": "False"}, "fold": 1, "accuracy": 0.18241887176953717, "time": 1568041359.308249}
+{"params": {"L": "4000", "level": "char", "n": "4", "norm": "False"}, "fold": 1, "accuracy": 0.18643282798653782, "time": 1568042054.068067}
+{"params": {"L": "4000", "level": "char", "n": "3", "norm": "False"}, "fold": 1, "accuracy": 0.18220273566554482, "time": 1568045874.0000267}
