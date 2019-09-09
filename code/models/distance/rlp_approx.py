@@ -27,26 +27,24 @@ class Model:
         # and recenter them to each author's profile
         # tqdm.write("normalising and recentering ngram frequencies...")
         self.corpus_normfreqs = normalise_counter(corpus_counts)
-        self.author_recentered_normfreqs = {}
-        self.author_top_L_ngrams = {}
+        self.author_topL_recentered_normfreqs = {}
         for author, counts in author_counts.items():
             normfreqs = normalise_counter(counts)            
 
             # recenter the normalised frequences for this author
             recentered_normfreqs = recenter_counter(normfreqs, self.corpus_normfreqs)
 
-            # compute the PROFILE: the L most-distinctive ngrams (largest absolute recentered normalised frquency)
-            ngrams = recentered_normfreqs.keys()
-            top_L_ngrams = nlargest(self.L, ngrams, key=lambda ngram: abs(recentered_normfreqs[ngram]))
+            # compute the PROFILE: the L most-distinctive ngrams (largest
+            # absolute recentered normalised frquency)
+            topL_recentered_normfreqs = truncate_counter(recentered_normfreqs, self.L, key=abs)
 
-            self.author_recentered_normfreqs[author] = recentered_normfreqs
-            self.author_top_L_ngrams[author] = top_L_ngrams
+            self.author_topL_recentered_normfreqs[author] = topL_recentered_normfreqs
 
         # construct an inverted index for quickly looping through intersections
         # tqdm.write("inverting author profiles...")
         self.authors_with_ngram = defaultdict(list)
-        for author, top_L_ngrams in self.author_top_L_ngrams.items():
-            for ngram in top_L_ngrams:
+        for author, profile in self.author_topL_recentered_normfreqs.items():
+            for ngram in profile.keys():
                 self.authors_with_ngram[ngram].append(author)
 
         # compute author-specific, tweet-independent offsets to distance:
@@ -54,20 +52,20 @@ class Model:
         # POSITIVE sum here!
         # tqdm.write("computing offsets...")
         self.author_offset = {}
-        for author, top_L_ngrams in self.author_top_L_ngrams.items():
+        for author, profile in self.author_topL_recentered_normfreqs.items():
             offset = 0
-            for ngram in top_L_ngrams:
-                offset += self.corpus_normfreqs[ngram] * self.author_recentered_normfreqs[author][ngram]
+            for ngram, RP_a in profile.items():
+                offset += self.corpus_normfreqs[ngram] * RP_a
             self.author_offset[author] = offset
 
         # Also compute normalisation constants, assuming they are
         # also tweet-independent (APPROXIMATION)
         # tqdm.write("computing normalisation terms...")
         self.author_profile_length = {}
-        for author, top_L_ngrams in self.author_top_L_ngrams.items():
+        for author, profile in self.author_topL_recentered_normfreqs.items():
             length_squared = 0
-            for ngram in top_L_ngrams:
-                length_squared += self.author_recentered_normfreqs[author][ngram] ** 2
+            for RP_a in profile.values():
+                length_squared += RP_a ** 2
             self.author_profile_length[author] = length_squared ** 0.5
 
         # done!
@@ -83,7 +81,7 @@ class Model:
         for ngram, RP_t in tweet_recentered_normfreqs.items():
             E = self.corpus_normfreqs[ngram]
             for author in self.authors_with_ngram[ngram]:
-                RP_a = self.author_recentered_normfreqs[author][ngram]
+                RP_a = self.author_topL_recentered_normfreqs[author][ngram]
                 numerator[author] += RP_a * RP_t + RP_a * E
                 if self.truncate:
                     numerator[author] += RP_t * E
@@ -113,3 +111,7 @@ def normalise_counter(counter):
 
 def recenter_counter(counter, center):
     return Counter({k: v-center[k] for k, v in counter.items()})
+
+def truncate_counter(counter, L, key=id):
+    top_L_items = nlargest(L, counter.items(), key=lambda item: key(item[1]))
+    return Counter(dict(top_L_items))
