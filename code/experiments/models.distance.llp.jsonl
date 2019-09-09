@@ -3,3 +3,12 @@
 {"params": {"n": "5", "norm": "False", "smoothing": "lerp-0.5"}, "fold": 1, "accuracy": 0.31460153765399695, "time": 1567702155.492673}
 {"params": {"n": "4", "norm": "False", "smoothing": "add-0.00055"}, "fold": 1, "accuracy": 0.26837928798592026, "time": 1567792272.634753}
 {"params": {"n": "4", "norm": "False", "smoothing": "lerp-0.6"}, "fold": 1, "accuracy": 0.3209929910149134, "time": 1567801520.788238}
+{"params": {"level": "word", "n": "2", "norm": "True", "smoothing": "add-0.00055"}, "fold": 1, "accuracy": 0.20390897582363293, "time": 1567900543.6561136}
+{"params": {"level": "word", "n": "2", "norm": "True", "smoothing": "add-0.0001"}, "fold": 1, "accuracy": 0.19557229752678543, "time": 1567903921.4122558}
+{"params": {"level": "word", "n": "2", "norm": "True", "smoothing": "add-0.001"}, "fold": 1, "accuracy": 0.205205792447587, "time": 1567907333.1162307}
+{"params": {"level": "word", "n": "2", "norm": "True", "smoothing": "lerp-0.6"}, "fold": 1, "accuracy": 0.2221879149041282, "time": 1567912603.1024804}
+{"params": {"level": "word", "n": "2", "norm": "True", "smoothing": "lerp-0.5"}, "fold": 1, "accuracy": 0.22194090221385124, "time": 1567917849.7525861}
+{"params": {"level": "word", "n": "2", "norm": "True", "smoothing": "lerp-0.4"}, "fold": 1, "accuracy": 0.22132337048815884, "time": 1567923949.4825635}
+{"params": {"level": "word", "n": "2", "norm": "True", "smoothing": "elerp-10000"}, "fold": 1, "accuracy": 0.21888412017167383, "time": 1567929155.5576131}
+{"params": {"level": "word", "n": "2", "norm": "True", "smoothing": "elerp-15000"}, "fold": 1, "accuracy": 0.21693889523574272, "time": 1567934351.2775862}
+{"params": {"level": "word", "n": "2", "norm": "True", "smoothing": "elerp-5000"}, "fold": 1, "accuracy": 0.22092197486645876, "time": 1567939586.3103812}

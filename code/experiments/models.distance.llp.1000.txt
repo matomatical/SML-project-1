@@ -100,3 +100,19 @@ k     acc
 30K   287 how high can it go?
 40K   282
 50K   277 on the way back down!?
+
+okay, how about wordgrams?
+
+n=2:
+      norm
+alpha False  True
+ 0.1   182   216
+ 0.2   186   219
+ 0.3   187   218
+ 0.4   189   219
+ 0.5   189   220
+ 0.6   189   219
+ 0.7   187   216
+ 0.8   190   214
+ 0.9   189   214
+

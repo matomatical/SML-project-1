@@ -1,10 +1,14 @@
 import sys
 import time
+import importlib
 
 from tqdm import tqdm
 
-import data; data.load_test()
+import data
 import models
+
+data.load_all_train()
+data.load_test()
 
 def main():
     if len(sys.argv) <= 1:
@@ -12,9 +16,11 @@ def main():
         sys.exit(1)
     module_name = sys.argv[1]
     hyper_parameters = models.parse_hyper_parameters(sys.argv[2:])
-    model = models.load(module_name, hyper_parameters)
+    model_class = importlib.import_module(module_name).Model
     print("Model:", module_name, hyper_parameters)
 
+    print("Training on ALL of the training data...")
+    model = model_class(tqdm(data.ALL_TRAIN, dynamic_ncols=True), **hyper_parameters)
     print("Labelling unlabelled tweets...")
     for tweet in tqdm(data.TEST, dynamic_ncols=True):
         tweet.handle = model.predict(tweet)

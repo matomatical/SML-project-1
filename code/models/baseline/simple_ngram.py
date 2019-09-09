@@ -8,19 +8,26 @@ def _ddictpickle(): # needed to pickle the module
 
 
 class Model:
-    def __init__(self, data, n, L, norm, level="char"):
+    def __init__(self, data, n, L, norm, level="char", ties="none"):
 
         self.ngramLen = int(n)
         self.L = int(L)
         self.norm = eval(norm)
         self.level = level
+        if ties == "none":
+            self.tiebreak = False
+        elif ties == "prior":
+            self.tiebreak = True
 
         self.ngrams = defaultdict(_ddictpickle) # {handle: {ngram: count, ...}, ...}
         # After triming converted to {handle: set(top_L_ngrams)}
 
         self.invertedNgram = defaultdict(set) # {ngram: set(handles), ...} used for inverted index
+        
+        self.ntweets = defaultdict(int)
 
         for t in data:
+            self.ntweets[t.handle] += 1
             for ng in t.ngram(self.ngramLen, norm=self.norm, level=self.level):
                 self.ngrams[t.handle][ng] += 1
         
@@ -68,16 +75,20 @@ class Model:
         # add more flexible output modes for ensemble methods
         # (default behaviour remains the same)
         if topk is None:
-            best_pair = max(matches.items(), key=lambda x: x[1])
+            if not self.tiebreak:
+                best_pair = max(matches.items(), key = lambda x: x[1])
+            else:
+                best_pair = max(matches.items(), key = lambda x: (x[1], self.ntweets[x[0]]))
             if scores:
                 return best_pair
             else:
                 return best_pair[0]
         else:
-            best_pairs = heapq.nlargest(topk, matches.items(), key=lambda x: x[1])
+            if not self.tiebreak:
+                best_pairs = heapq.nlargest(topk, matches.items(), key=lambda x: x[1])
+            else:
+                best_pairs = heapq.nlargest(topk, matches.items(), key=lambda x: (x[1], self.ntweets[x[0]]))
             if scores:
                 return best_pairs
             else:
                 return [handle for handle, score in best_pairs]
-        # return max(matches.items(), key = lambda x: x[1])[0]
-        # return sorted(matches.items(), key = lambda x : x[1], reverse = True)[0]

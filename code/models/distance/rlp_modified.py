@@ -27,6 +27,9 @@ class Model:
         # {ngram: mean frequency, ...}
         self.meanFrequencies = defaultdict(float)
 
+        # {handle: sum [P(x) - E(x)], ...}
+        self.offset = defaultdict(float)
+
         for t in data:
             self.num_tweets[t.handle] += 1
             for ng in t.ngram(self.n, self.level, norm=self.norm):
@@ -48,8 +51,16 @@ class Model:
             total_grams = sum(grams.values())
             for gram in grams:
                 recentered[gram] = abs(grams[gram]/total_grams - self.meanFrequencies.get(gram, 0.0))
+                if grams[gram]/total_grams > self.meanFrequencies.get(gram, 0.0):
+                    self.offset[handle] += 1
+                else:
+                    self.offset[handle] -= 1
+            
 
             topL = sorted(recentered.items(), key = lambda x: x[1], reverse = True)[:L]
+
+            if (len(topL) < L):
+                self.offset[handle] -= (L - len(topL))
 
             self.ngrams[handle] = {(n,grams[n]/total_grams) for n,_ in topL}
 
@@ -72,10 +83,13 @@ class Model:
             corpus_n_f = self.meanFrequencies[gram]
             # retrieve all handles with this ngram
             for h, n_f in self.invertedNgram[gram]:
-                if (author_n_f < corpus_n_f == n_f < corpus_n_f):
-                    distances[h] += 1
+                distances[h] += (author_n_f - corpus_n_f) * (n_f - corpus_n_f)
+                if (author_n_f > corpus_n_f and n_f > corpus_n_f):
+                    distances[h] += 3
                 else:
-                    distances[h] -= 1        
+                    distances[h] -= 1  
+        for handle in self.offset:
+            distances[handle] +=  self.offset[handle]     
         if len(distances) == 0:
             return "?????" # unknown 
 
