@@ -63,3 +63,4 @@
 {"params": {"L": "4200", "level": "char", "n": "6", "norm": "False"}, "fold": 1, "accuracy": 0.2487109025226171, "time": 1567856999.381783}
 {"params": {"L": "4300", "level": "char", "n": "6", "norm": "False"}, "fold": 1, "accuracy": 0.24843301324605552, "time": 1567858437.7315578}
 {"params": {"L": "4400", "level": "char", "n": "6", "norm": "False"}, "fold": 1, "accuracy": 0.24877265569518633, "time": 1567860011.722018}
+{"params": {"L": "10000", "level": "char", "n": "6", "norm": "False"}, "fold": 1, "accuracy": 0.23741007194244604, "time": 1567900661.610843}

@@ -1,9 +1,8 @@
 import ast
 import numpy as np
 from collections import defaultdict, Counter
-from tqdm import tqdm
 from heapq import nlargest
-from copy import deepcopy
+from scipy.spatial import distance
 
 
 def _ddictpickle(): # needed to pickle the module
@@ -18,7 +17,7 @@ class Model:
         self.norm = ast.literal_eval(norm)
 
         # {handle: {ngram: count, ...}, ...}
-        # After triming converted to {handle: set(top_L_ngrams)}
+        # After triming converted to {handle: {ngram: recentered}}
         self.ngrams = defaultdict(_ddictpickle) 
         
         # {ngram: set(handles), ...} used for inverted index
@@ -29,9 +28,6 @@ class Model:
 
         # {ngram: mean frequency, ...}
         self.meanFrequencies = defaultdict(float)
-
-        # {handle: sum [P(x) - E(x)], ...}
-        self.offset = defaultdict(float)
 
         for t in data:
             self.num_tweets[t.handle] += 1
@@ -49,63 +45,57 @@ class Model:
     def trim(self, L):
         recentered = {}
 
-        corpus_top_L = dict(nlargest(L, self.meanFrequencies.items(), key = lambda x: x[1]))
-        for handle, grams in tqdm(self.ngrams.items()):
-            recentered = deepcopy(corpus_top_L)
+        for handle, grams in self.ngrams.items():
+            recentered = {}
             total_grams = sum(grams.values())
-
             for gram in grams:
-                recentered[gram] = abs(grams.get(gram, 0)/total_grams - self.meanFrequencies[gram])                
+                recentered[gram] = abs(grams[gram]/total_grams - self.meanFrequencies.get(gram, 0.0))
 
-            topL = sorted(recentered.items(), key = lambda x: x[1], reverse = True)[:L]
+            # topL = sorted(recentered.items(), key = lambda x: x[1], reverse = True)[:L]
 
-            total_grams = sum(grams[gram] for gram, _ in topL)
-            for gram, _ in topL:
-                if grams[gram]/total_grams > self.meanFrequencies.get(gram, 0.0):
-                    self.offset[handle] -= 1
-                else:
-                    self.offset[handle] += 1
-
-            self.ngrams[handle] = {(n,grams[n]/total_grams) for n,_ in topL}
+            self.ngrams[handle] = recentered
 
         # Inverting index
         for handle, grams in self.ngrams.items():
-            for n, n_f in grams:
+            for n, n_f in grams.items():
                 self.invertedNgram[n].add((handle, n_f))
 
     def predict(self, tweet):
         tweetGrams = tweet.ngram(self.n, self.level, norm = self.norm)
         tweetGramsCounter = Counter(tweetGrams)
+        
+        distances = defaultdict(float)
 
-        distances = defaultdict(int)
-
+        # transform counts to recentered normalised frequencies
+        tweet_rnf = {}
+        total = sum(tweetGramsCounter.values())
         for gram in tweetGramsCounter:
-            if gram not in self.invertedNgram: # unknown ngram, skip
-                continue
-            
-            author_n_f = tweetGramsCounter[gram]/sum(tweetGramsCounter.values())
-            corpus_n_f = self.meanFrequencies[gram]
-            # retrieve all handles with this ngram
-            for h, n_f in self.invertedNgram[gram]:
-                if (author_n_f > corpus_n_f and n_f > corpus_n_f):
-                    distances[h] += 3
-                else:
-                    distances[h] -= 1  
-        for handle in self.offset:
-            distances[handle] +=  self.offset[handle]     
-        if len(distances) == 0:
-            return "?????" # unknown 
+            tweet_rnf[gram] = tweetGramsCounter[gram]/total
+
+        for author in self.ngrams:
+            # all n-grams of the top L of either profile
+            a_top_L = {ng for ng, _ in nlargest(self.L, self.ngrams[author].items(), key = lambda x: x[1])}
+            t_top_L = {ng for ng, _ in nlargest(self.L, tweet_rnf.items(), key = lambda x: x[1])}
+
+            top_L = a_top_L | t_top_L
+
+            P_a = []
+            P_t = []
+            for ng in top_L:
+                P_a.append(self.ngrams[author].get(ng, 0))
+                P_t.append(tweet_rnf.get(ng, 0.))
+            P_a = np.array(P_a)
+            P_t = np.array(P_t)
+
+            distances[author] = 1 - distance.cosine(P_t, P_a)
 
         _, dist = min(distances.items(), key = lambda x: x[1])
 
         # of the authors with distance `dist`, predict the author with the most tweets
-        predicted_author = (None, 0) # (handle, tweet count)
+        predicted_author = (None, None) # (handle, tweet count)
         for h in distances:
             if distances[h] == dist:
-                if self.num_tweets[h] > predicted_author[1]:
+                if predicted_author[1] is None or self.num_tweets[h] > predicted_author[1]:
                     predicted_author = (h, self.num_tweets[h])
-
-        print(tweet)
-        print(predicted_author[0])
         return predicted_author[0]
 

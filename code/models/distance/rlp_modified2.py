@@ -1,7 +1,6 @@
 import ast
 import numpy as np
 from collections import defaultdict, Counter
-from tqdm import tqdm
 from heapq import nlargest
 from copy import deepcopy
 
@@ -30,9 +29,6 @@ class Model:
         # {ngram: mean frequency, ...}
         self.meanFrequencies = defaultdict(float)
 
-        # {handle: sum [P(x) - E(x)], ...}
-        self.offset = defaultdict(float)
-
         for t in data:
             self.num_tweets[t.handle] += 1
             for ng in t.ngram(self.n, self.level, norm=self.norm):
@@ -48,64 +44,64 @@ class Model:
     # keep L most distinctive ngrams (including count?)
     def trim(self, L):
         recentered = {}
-
         corpus_top_L = dict(nlargest(L, self.meanFrequencies.items(), key = lambda x: x[1]))
-        for handle, grams in tqdm(self.ngrams.items()):
+        for handle, grams in self.ngrams.items():
             recentered = deepcopy(corpus_top_L)
             total_grams = sum(grams.values())
-
             for gram in grams:
-                recentered[gram] = abs(grams.get(gram, 0)/total_grams - self.meanFrequencies[gram])                
+                recentered[gram] = abs(grams[gram]/total_grams - self.meanFrequencies.get(gram, 0.0))
 
-            topL = sorted(recentered.items(), key = lambda x: x[1], reverse = True)[:L]
+            topL = dict(nlargest(L, recentered.items(), key = lambda x: x[1]))
 
-            total_grams = sum(grams[gram] for gram, _ in topL)
-            for gram, _ in topL:
-                if grams[gram]/total_grams > self.meanFrequencies.get(gram, 0.0):
-                    self.offset[handle] -= 1
-                else:
-                    self.offset[handle] += 1
+            # total_grams = sum(grams[gram] for gram in topL)
 
-            self.ngrams[handle] = {(n,grams[n]/total_grams) for n,_ in topL}
+            self.ngrams[handle] = {n:grams[n]/total_grams for n in topL}
 
-        # Inverting index
-        for handle, grams in self.ngrams.items():
-            for n, n_f in grams:
-                self.invertedNgram[n].add((handle, n_f))
+        # # Inverting index
+        # for handle, grams in self.ngrams.items():
+        #     for n, n_f in grams:
+        #         self.invertedNgram[n].add((handle, n_f))
 
     def predict(self, tweet):
         tweetGrams = tweet.ngram(self.n, self.level, norm = self.norm)
         tweetGramsCounter = Counter(tweetGrams)
 
         distances = defaultdict(int)
+        print("4624" in self.ngrams)
+        for author in self.ngrams:
+          if author != "4624":
+            continue
+          else:
+            print("here")
+            grams = tweetGramsCounter + Counter(self.ngrams[author])
+            for gram in grams:
+              test_tweet_n_f = tweetGramsCounter[gram]/sum(tweetGramsCounter.values())
+              corpus_n_f = self.meanFrequencies[gram]
+              potential_author_n_f = self.ngrams[author].get(gram, 0)
+              print(tweet)
+              print("gram", gram)
+              print("test_tweet:", test_tweet_n_f)
+              print("corpus_n_f: ", corpus_n_f)
+              print("potential_author_n_f:", potential_author_n_f)
+              print()
 
-        for gram in tweetGramsCounter:
-            if gram not in self.invertedNgram: # unknown ngram, skip
-                continue
-            
-            author_n_f = tweetGramsCounter[gram]/sum(tweetGramsCounter.values())
-            corpus_n_f = self.meanFrequencies[gram]
-            # retrieve all handles with this ngram
-            for h, n_f in self.invertedNgram[gram]:
-                if (author_n_f > corpus_n_f and n_f > corpus_n_f):
-                    distances[h] += 3
-                else:
-                    distances[h] -= 1  
-        for handle in self.offset:
-            distances[handle] +=  self.offset[handle]     
+              if (test_tweet_n_f < corpus_n_f == potential_author_n_f < corpus_n_f):
+                  distances[author] += 1
+              else:
+                  distances[author] -= 1
+            print(distances)
+            break
+
         if len(distances) == 0:
             return "?????" # unknown 
 
         _, dist = min(distances.items(), key = lambda x: x[1])
 
         # of the authors with distance `dist`, predict the author with the most tweets
-        predicted_author = (None, 0) # (handle, tweet count)
+        predicted_author = (None, None) # (handle, tweet count)
         for h in distances:
             if distances[h] == dist:
-                if self.num_tweets[h] > predicted_author[1]:
+                if predicted_author[1] is None or self.num_tweets[h] > predicted_author[1]:
                     predicted_author = (h, self.num_tweets[h])
-
-        print(tweet)
-        print(predicted_author[0])
+        print(predicted_author)
         return predicted_author[0]
-
