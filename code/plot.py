@@ -17,7 +17,7 @@ def main():
     # collate folds
     collated_results = defaultdict(list)
     for result in results:
-        params = tuple(result['params'].items())
+        params = tuple(sorted(result['params'].items()))
         collated_results[params].append((result['fold'], result['accuracy']))
     scored_results = defaultdict(dict)
     full_params = {}

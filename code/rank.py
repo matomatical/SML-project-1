@@ -47,7 +47,7 @@ def main():
             # collate and rank
             collated_results = defaultdict(list)
             for result in results:
-                params = tuple(result['params'].items())
+                params = tuple(sorted(result['params'].items()))
                 collated_results[params].append((result['fold'], result['accuracy']))
             scored_results = []
             for params, fold_accs in collated_results.items():

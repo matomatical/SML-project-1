@@ -45,7 +45,7 @@ tr:nth-child(2n-1) td {background-color: #eee;}
 </tr>
 </table>
 
-<h2>experiments/models.distance.llp.jsonl</h2>
+<h2>experiments/models.baseline.rlp_ngram.jsonl</h2>
 <table>
 <thead>
  <th>Rank</th>
@@ -55,86 +55,782 @@ tr:nth-child(2n-1) td {background-color: #eee;}
 </thead>
 <tr>
  <td>1</td>
- <td>n=4, norm=False, smoothing=lerp-0.6</td>
- <td>32.10%</td>
+ <td>L=3500, level=char, n=6, norm=False</td>
+ <td>24.95%</td>
  <td>1</td>
 </tr>
 <tr>
  <td>2</td>
- <td>n=5, norm=False, smoothing=lerp-0.6</td>
- <td>31.52%</td>
+ <td>L=4000, level=char, n=6, norm=False</td>
+ <td>24.91%</td>
  <td>1</td>
 </tr>
 <tr>
  <td>3</td>
- <td>n=5, norm=False, smoothing=lerp-0.55</td>
- <td>31.51%</td>
+ <td>L=3000, level=char, n=6, norm=False</td>
+ <td>24.89%</td>
  <td>1</td>
 </tr>
 <tr>
  <td>4</td>
- <td>n=5, norm=False, smoothing=lerp-0.5</td>
- <td>31.46%</td>
+ <td>L=4400, level=char, n=6, norm=False</td>
+ <td>24.88%</td>
  <td>1</td>
 </tr>
 <tr>
  <td>5</td>
- <td>n=4, norm=False, smoothing=add-0.00055</td>
- <td>26.84%</td>
+ <td>L=4500, level=char, n=6, norm=False</td>
+ <td>24.87%</td>
  <td>1</td>
 </tr>
 <tr>
  <td>6</td>
- <td>level=word, n=2, norm=True, smoothing=lerp-0.6</td>
- <td>22.22%</td>
+ <td>L=4200, level=char, n=6, norm=False</td>
+ <td>24.87%</td>
  <td>1</td>
 </tr>
 <tr>
  <td>7</td>
- <td>level=word, n=2, norm=True, smoothing=lerp-0.5</td>
- <td>22.19%</td>
+ <td>L=4300, level=char, n=6, norm=False</td>
+ <td>24.84%</td>
  <td>1</td>
 </tr>
 <tr>
  <td>8</td>
- <td>level=word, n=2, norm=True, smoothing=lerp-0.4</td>
- <td>22.13%</td>
+ <td>L=2500, level=char, n=6, norm=False</td>
+ <td>24.77%</td>
  <td>1</td>
 </tr>
 <tr>
  <td>9</td>
- <td>level=word, n=2, norm=True, smoothing=elerp-5000</td>
- <td>22.09%</td>
+ <td>L=2000, level=char, n=6, norm=False</td>
+ <td>24.69%</td>
  <td>1</td>
 </tr>
 <tr>
  <td>10</td>
- <td>level=word, n=2, norm=True, smoothing=elerp-10000</td>
- <td>21.89%</td>
+ <td>L=2000, level=char, n=7, norm=False</td>
+ <td>24.49%</td>
  <td>1</td>
 </tr>
 <tr>
  <td>11</td>
- <td>level=word, n=2, norm=True, smoothing=elerp-15000</td>
- <td>21.69%</td>
+ <td>L=1500, level=char, n=6, norm=False</td>
+ <td>24.47%</td>
  <td>1</td>
 </tr>
 <tr>
  <td>12</td>
- <td>level=word, n=2, norm=True, smoothing=add-0.001</td>
- <td>20.52%</td>
+ <td>L=1500, level=char, n=7, norm=False</td>
+ <td>24.35%</td>
  <td>1</td>
 </tr>
 <tr>
  <td>13</td>
- <td>level=word, n=2, norm=True, smoothing=add-0.00055</td>
- <td>20.39%</td>
+ <td>L=2000, level=char, n=8, norm=False</td>
+ <td>24.20%</td>
  <td>1</td>
 </tr>
 <tr>
  <td>14</td>
- <td>level=word, n=2, norm=True, smoothing=add-0.0001</td>
- <td>19.56%</td>
+ <td>L=1000, n=5, level=char, norm=False</td>
+ <td>24.13%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>15</td>
+ <td>L=1000, level=char, n=6, norm=False</td>
+ <td>24.11%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>16</td>
+ <td>L=1000, level=char, n=7, norm=False</td>
+ <td>23.94%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>17</td>
+ <td>L=1500, level=char, n=8, norm=False</td>
+ <td>23.90%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>18</td>
+ <td>L=1000, level=char, n=8, norm=False</td>
+ <td>23.56%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>19</td>
+ <td>L=1000, n=4, level=char, norm=False</td>
+ <td>23.40%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>20</td>
+ <td>L=500, n=5, level=char, norm=False</td>
+ <td>23.37%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>21</td>
+ <td>L=500, n=4, level=char, norm=False</td>
+ <td>22.80%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>22</td>
+ <td>L=200, n=5, level=char, norm=False</td>
+ <td>21.43%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>23</td>
+ <td>L=200, n=4, level=char, norm=False</td>
+ <td>20.87%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>24</td>
+ <td>L=1000, n=3, level=char, norm=False</td>
+ <td>20.70%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>25</td>
+ <td>L=1000, n=5, level=char, norm=True</td>
+ <td>20.34%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>26</td>
+ <td>L=500, n=3, level=char, norm=False</td>
+ <td>20.24%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>27</td>
+ <td>L=1000, n=4, level=char, norm=True</td>
+ <td>19.49%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>28</td>
+ <td>L=500, n=5, level=char, norm=True</td>
+ <td>19.27%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>29</td>
+ <td>L=500, n=4, level=char, norm=True</td>
+ <td>18.93%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>30</td>
+ <td>L=200, n=3, level=char, norm=False</td>
+ <td>18.76%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>31</td>
+ <td>L=1000, n=2, level=word, norm=True</td>
+ <td>18.25%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>32</td>
+ <td>L=500, n=2, level=word, norm=True</td>
+ <td>18.01%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>33</td>
+ <td>L=800, level=word, n=2, norm=True</td>
+ <td>17.94%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>34</td>
+ <td>L=600, level=word, n=2, norm=True</td>
+ <td>17.86%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>35</td>
+ <td>L=400, level=word, n=2, norm=True</td>
+ <td>17.56%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>36</td>
+ <td>L=2000, level=word, n=2, norm=True</td>
+ <td>17.55%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>37</td>
+ <td>L=200, n=5, level=char, norm=True</td>
+ <td>17.32%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>38</td>
+ <td>L=1000, n=3, level=word, norm=True</td>
+ <td>17.32%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>39</td>
+ <td>L=2000, level=word, n=3, norm=True</td>
+ <td>17.17%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>40</td>
+ <td>L=800, level=word, n=3, norm=True</td>
+ <td>17.00%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>41</td>
+ <td>L=200, n=4, level=char, norm=True</td>
+ <td>16.98%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>42</td>
+ <td>L=600, level=word, n=3, norm=True</td>
+ <td>16.79%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>43</td>
+ <td>L=1000, n=2, level=word, norm=False</td>
+ <td>16.78%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>44</td>
+ <td>L=500, n=3, level=word, norm=True</td>
+ <td>16.76%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>45</td>
+ <td>L=250, level=word, n=2, norm=True</td>
+ <td>16.75%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>46</td>
+ <td>L=200, n=2, level=word, norm=True</td>
+ <td>16.65%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>47</td>
+ <td>L=500, n=2, level=word, norm=False</td>
+ <td>16.58%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>48</td>
+ <td>L=1000, n=3, level=word, norm=False</td>
+ <td>16.41%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>49</td>
+ <td>L=1000, n=4, level=word, norm=True</td>
+ <td>16.35%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>50</td>
+ <td>L=400, level=word, n=3, norm=True</td>
+ <td>16.32%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>51</td>
+ <td>L=1000, n=3, level=char, norm=True</td>
+ <td>16.26%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>52</td>
+ <td>L=500, n=3, level=char, norm=True</td>
+ <td>16.13%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>53</td>
+ <td>L=500, n=3, level=word, norm=False</td>
+ <td>16.01%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>54</td>
+ <td>L=1000, n=4, level=word, norm=False</td>
+ <td>15.85%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>55</td>
+ <td>L=1000, n=5, level=word, norm=True</td>
+ <td>15.78%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>56</td>
+ <td>L=150, level=word, n=2, norm=True</td>
+ <td>15.69%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>57</td>
+ <td>L=500, n=4, level=word, norm=True</td>
+ <td>15.60%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>58</td>
+ <td>L=200, n=2, level=word, norm=False</td>
+ <td>15.55%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>59</td>
+ <td>L=250, level=word, n=3, norm=True</td>
+ <td>15.45%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>60</td>
+ <td>L=500, n=4, level=word, norm=False</td>
+ <td>15.35%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>61</td>
+ <td>L=1000, n=5, level=word, norm=False</td>
+ <td>15.34%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>62</td>
+ <td>L=200, n=3, level=word, norm=True</td>
+ <td>15.24%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>63</td>
+ <td>L=500, n=5, level=word, norm=True</td>
+ <td>14.98%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>64</td>
+ <td>L=200, n=3, level=word, norm=False</td>
+ <td>14.87%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>65</td>
+ <td>L=500, n=5, level=word, norm=False</td>
+ <td>14.82%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>66</td>
+ <td>L=100, level=word, n=2, norm=True</td>
+ <td>14.80%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>67</td>
+ <td>L=250, level=word, n=1, norm=True</td>
+ <td>14.63%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>68</td>
+ <td>L=200, n=3, level=char, norm=True</td>
+ <td>14.60%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>69</td>
+ <td>L=150, level=word, n=3, norm=True</td>
+ <td>14.39%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>70</td>
+ <td>L=200, n=4, level=word, norm=False</td>
+ <td>14.06%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>71</td>
+ <td>L=200, n=4, level=word, norm=True</td>
+ <td>13.96%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>72</td>
+ <td>L=100, level=word, n=3, norm=True</td>
+ <td>13.65%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>73</td>
+ <td>L=200, n=5, level=word, norm=False</td>
+ <td>13.53%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>74</td>
+ <td>L=50, level=word, n=2, norm=True</td>
+ <td>13.52%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>75</td>
+ <td>L=150, level=word, n=1, norm=True</td>
+ <td>13.45%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>76</td>
+ <td>L=200, n=5, level=word, norm=True</td>
+ <td>13.33%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>77</td>
+ <td>L=50, level=word, n=3, norm=True</td>
+ <td>12.49%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>78</td>
+ <td>L=100, level=word, n=1, norm=True</td>
+ <td>12.41%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>79</td>
+ <td>L=400, level=flex, n=2, norm=True</td>
+ <td>11.95%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>80</td>
+ <td>L=500, n=2, level=char, norm=False</td>
+ <td>11.88%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>81</td>
+ <td>L=600, level=flex, n=2, norm=True</td>
+ <td>11.84%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>82</td>
+ <td>L=200, level=flex, n=2, norm=True</td>
+ <td>11.65%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>83</td>
+ <td>L=800, level=flex, n=2, norm=True</td>
+ <td>11.63%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>84</td>
+ <td>L=1000, level=flex, n=2, norm=True</td>
+ <td>11.50%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>85</td>
+ <td>L=150, level=flex, n=2, norm=True</td>
+ <td>11.32%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>86</td>
+ <td>L=800, level=flex, n=3, norm=True</td>
+ <td>11.32%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>87</td>
+ <td>L=1000, level=flex, n=3, norm=True</td>
+ <td>11.31%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>88</td>
+ <td>L=600, level=flex, n=3, norm=True</td>
+ <td>11.29%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>89</td>
+ <td>L=2000, level=flex, n=3, norm=True</td>
+ <td>11.27%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>90</td>
+ <td>L=2000, level=flex, n=2, norm=True</td>
+ <td>11.17%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>91</td>
+ <td>L=400, level=flex, n=3, norm=True</td>
+ <td>11.17%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>92</td>
+ <td>L=100, level=flex, n=2, norm=True</td>
+ <td>10.80%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>93</td>
+ <td>L=200, level=flex, n=3, norm=True</td>
+ <td>10.63%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>94</td>
+ <td>L=200, n=2, level=char, norm=False</td>
+ <td>10.55%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>95</td>
+ <td>L=50, level=word, n=1, norm=True</td>
+ <td>10.46%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>96</td>
+ <td>L=150, level=flex, n=3, norm=True</td>
+ <td>10.26%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>97</td>
+ <td>L=1000, n=2, level=char, norm=False</td>
+ <td>10.16%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>98</td>
+ <td>L=2000, level=flex, n=4, norm=True</td>
+ <td>9.90%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>99</td>
+ <td>L=1000, level=flex, n=4, norm=True</td>
+ <td>9.88%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>100</td>
+ <td>L=800, level=flex, n=4, norm=True</td>
+ <td>9.87%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>101</td>
+ <td>L=600, level=flex, n=4, norm=True</td>
+ <td>9.81%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>102</td>
+ <td>L=50, level=flex, n=2, norm=True</td>
+ <td>9.81%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>103</td>
+ <td>L=100, level=flex, n=3, norm=True</td>
+ <td>9.71%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>104</td>
+ <td>L=400, level=flex, n=4, norm=True</td>
+ <td>9.64%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>105</td>
+ <td>L=200, level=flex, n=4, norm=True</td>
+ <td>9.01%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>106</td>
+ <td>L=50, level=flex, n=3, norm=True</td>
+ <td>8.68%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>107</td>
+ <td>L=150, level=flex, n=4, norm=True</td>
+ <td>8.58%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>108</td>
+ <td>L=2000, level=flex, n=5, norm=True</td>
+ <td>8.36%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>109</td>
+ <td>L=1000, level=flex, n=5, norm=True</td>
+ <td>8.34%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>110</td>
+ <td>L=800, level=flex, n=5, norm=True</td>
+ <td>8.32%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>111</td>
+ <td>L=600, level=flex, n=5, norm=True</td>
+ <td>8.25%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>112</td>
+ <td>L=400, level=flex, n=5, norm=True</td>
+ <td>8.07%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>113</td>
+ <td>L=100, level=flex, n=4, norm=True</td>
+ <td>8.01%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>114</td>
+ <td>L=200, level=flex, n=5, norm=True</td>
+ <td>7.45%</td>
+ <td>1, 2, 3, 4, 5, 6, 8, 7</td>
+</tr>
+<tr>
+ <td>115</td>
+ <td>L=50, level=flex, n=4, norm=True</td>
+ <td>7.05%</td>
+ <td>1, 2, 3, 5, 4, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>116</td>
+ <td>L=150, level=flex, n=5, norm=True</td>
+ <td>7.04%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>117</td>
+ <td>L=2000, level=flex, n=6, norm=True</td>
+ <td>6.91%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>118</td>
+ <td>L=1000, level=flex, n=6, norm=True</td>
+ <td>6.89%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>119</td>
+ <td>L=800, level=flex, n=6, norm=True</td>
+ <td>6.87%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>120</td>
+ <td>L=600, level=flex, n=6, norm=True</td>
+ <td>6.82%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>121</td>
+ <td>L=400, level=flex, n=6, norm=True</td>
+ <td>6.67%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>122</td>
+ <td>L=100, level=flex, n=5, norm=True</td>
+ <td>6.50%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>123</td>
+ <td>L=200, n=2, level=char, norm=True</td>
+ <td>6.36%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>124</td>
+ <td>L=500, n=2, level=char, norm=True</td>
+ <td>6.27%</td>
+ <td>1</td>
+</tr>
+<tr>
+ <td>125</td>
+ <td>L=200, level=flex, n=6, norm=True</td>
+ <td>6.15%</td>
+ <td>1, 2, 3, 4, 5, 7, 6, 8</td>
+</tr>
+<tr>
+ <td>126</td>
+ <td>L=150, level=flex, n=6, norm=True</td>
+ <td>5.80%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>127</td>
+ <td>L=50, level=flex, n=5, norm=True</td>
+ <td>5.57%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>128</td>
+ <td>L=100, level=flex, n=6, norm=True</td>
+ <td>5.30%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>129</td>
+ <td>L=50, level=flex, n=6, norm=True</td>
+ <td>4.51%</td>
+ <td>1, 4, 3, 5, 2, 6, 8, 7</td>
+</tr>
+<tr>
+ <td>130</td>
+ <td>L=1000, n=2, level=char, norm=True</td>
+ <td>3.68%</td>
  <td>1</td>
 </tr>
 </table>
@@ -1707,43 +2403,313 @@ tr:nth-child(2n-1) td {background-color: #eee;}
 </tr>
 <tr>
  <td>211</td>
+ <td>L=400, level=flex, n=2, norm=True</td>
+ <td>9.27%</td>
+ <td>2, 1, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>212</td>
+ <td>L=600, level=flex, n=2, norm=True</td>
+ <td>9.27%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>213</td>
+ <td>L=800, level=flex, n=2, norm=True</td>
+ <td>9.27%</td>
+ <td>1, 2, 4, 3, 5, 6, 8, 7</td>
+</tr>
+<tr>
+ <td>214</td>
+ <td>L=1000, level=flex, n=2, norm=True</td>
+ <td>9.27%</td>
+ <td>1, 2, 4, 3, 5, 6, 8, 7</td>
+</tr>
+<tr>
+ <td>215</td>
+ <td>L=2000, level=flex, n=2, norm=True</td>
+ <td>9.27%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>216</td>
+ <td>L=200, level=flex, n=2, norm=True</td>
+ <td>9.26%</td>
+ <td>1, 2, 3, 4, 5, 6, 8, 7</td>
+</tr>
+<tr>
+ <td>217</td>
+ <td>L=150, level=flex, n=2, norm=True</td>
+ <td>9.25%</td>
+ <td>2, 1, 3, 4, 6, 5, 7, 8</td>
+</tr>
+<tr>
+ <td>218</td>
+ <td>L=100, level=flex, n=2, norm=True</td>
+ <td>9.17%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>219</td>
  <td>L=200, level=byte, n=2, norm=True</td>
  <td>9.16%</td>
  <td>1</td>
 </tr>
 <tr>
- <td>212</td>
+ <td>220</td>
  <td>L=200, n=2, norm=True</td>
  <td>8.87%</td>
  <td>1, 2, 3, 4, 5, 6, 7, 8</td>
 </tr>
 <tr>
- <td>213</td>
+ <td>221</td>
+ <td>L=50, level=flex, n=2, norm=True</td>
+ <td>8.72%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>222</td>
+ <td>L=400, level=flex, n=3, norm=True</td>
+ <td>8.14%</td>
+ <td>1, 2, 3, 4, 6, 5, 7, 8</td>
+</tr>
+<tr>
+ <td>223</td>
+ <td>L=600, level=flex, n=3, norm=True</td>
+ <td>8.14%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>224</td>
+ <td>L=800, level=flex, n=3, norm=True</td>
+ <td>8.14%</td>
+ <td>1, 2, 3, 4, 5, 6, 8, 7</td>
+</tr>
+<tr>
+ <td>225</td>
+ <td>L=1000, level=flex, n=3, norm=True</td>
+ <td>8.14%</td>
+ <td>1, 2, 3, 4, 5, 6, 8, 7</td>
+</tr>
+<tr>
+ <td>226</td>
+ <td>L=2000, level=flex, n=3, norm=True</td>
+ <td>8.14%</td>
+ <td>1, 2, 3, 4, 5, 6, 8, 7</td>
+</tr>
+<tr>
+ <td>227</td>
+ <td>L=200, level=flex, n=3, norm=True</td>
+ <td>8.12%</td>
+ <td>1, 2, 4, 3, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>228</td>
+ <td>L=150, level=flex, n=3, norm=True</td>
+ <td>8.07%</td>
+ <td>2, 1, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>229</td>
+ <td>L=100, level=flex, n=3, norm=True</td>
+ <td>7.97%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>230</td>
+ <td>L=50, level=flex, n=3, norm=True</td>
+ <td>7.61%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>231</td>
+ <td>L=400, level=flex, n=4, norm=True</td>
+ <td>6.52%</td>
+ <td>2, 1, 4, 3, 5, 6, 8, 7</td>
+</tr>
+<tr>
+ <td>232</td>
+ <td>L=600, level=flex, n=4, norm=True</td>
+ <td>6.52%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>233</td>
+ <td>L=800, level=flex, n=4, norm=True</td>
+ <td>6.52%</td>
+ <td>1, 2, 4, 3, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>234</td>
+ <td>L=1000, level=flex, n=4, norm=True</td>
+ <td>6.52%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>235</td>
+ <td>L=2000, level=flex, n=4, norm=True</td>
+ <td>6.52%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>236</td>
+ <td>L=200, level=flex, n=4, norm=True</td>
+ <td>6.50%</td>
+ <td>1, 2, 4, 3, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>237</td>
+ <td>L=150, level=flex, n=4, norm=True</td>
+ <td>6.46%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>238</td>
+ <td>L=100, level=flex, n=4, norm=True</td>
+ <td>6.37%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>239</td>
+ <td>L=50, level=flex, n=4, norm=True</td>
+ <td>6.05%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>240</td>
+ <td>L=400, level=flex, n=5, norm=True</td>
+ <td>5.10%</td>
+ <td>1, 2, 4, 3, 5, 6, 8, 7</td>
+</tr>
+<tr>
+ <td>241</td>
+ <td>L=600, level=flex, n=5, norm=True</td>
+ <td>5.10%</td>
+ <td>1, 2, 4, 3, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>242</td>
+ <td>L=800, level=flex, n=5, norm=True</td>
+ <td>5.10%</td>
+ <td>1, 2, 3, 4, 5, 6, 8, 7</td>
+</tr>
+<tr>
+ <td>243</td>
+ <td>L=1000, level=flex, n=5, norm=True</td>
+ <td>5.10%</td>
+ <td>1, 2, 4, 3, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>244</td>
+ <td>L=2000, level=flex, n=5, norm=True</td>
+ <td>5.10%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>245</td>
+ <td>L=200, level=flex, n=5, norm=True</td>
+ <td>5.09%</td>
+ <td>2, 1, 3, 4, 6, 5, 7, 8</td>
+</tr>
+<tr>
+ <td>246</td>
+ <td>L=150, level=flex, n=5, norm=True</td>
+ <td>5.05%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>247</td>
  <td>L=500, level=byte, n=2, norm=True</td>
  <td>4.97%</td>
  <td>1</td>
 </tr>
 <tr>
- <td>214</td>
+ <td>248</td>
+ <td>L=100, level=flex, n=5, norm=True</td>
+ <td>4.97%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>249</td>
  <td>L=500, n=2, norm=True</td>
  <td>4.88%</td>
  <td>1, 2, 3, 4, 5, 6, 7, 8</td>
 </tr>
 <tr>
- <td>215</td>
+ <td>250</td>
+ <td>L=50, level=flex, n=5, norm=True</td>
+ <td>4.70%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>251</td>
  <td>L=700, level=byte, n=2, norm=True</td>
  <td>4.27%</td>
  <td>1</td>
 </tr>
 <tr>
- <td>216</td>
+ <td>252</td>
  <td>L=1000, n=2, norm=True</td>
  <td>4.12%</td>
  <td>1, 2, 3, 4, 5, 6, 7, 8</td>
 </tr>
+<tr>
+ <td>253</td>
+ <td>L=400, level=flex, n=6, norm=True</td>
+ <td>4.06%</td>
+ <td>1, 2, 4, 3, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>254</td>
+ <td>L=600, level=flex, n=6, norm=True</td>
+ <td>4.06%</td>
+ <td>2, 1, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>255</td>
+ <td>L=800, level=flex, n=6, norm=True</td>
+ <td>4.06%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>256</td>
+ <td>L=1000, level=flex, n=6, norm=True</td>
+ <td>4.06%</td>
+ <td>1, 2, 4, 3, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>257</td>
+ <td>L=2000, level=flex, n=6, norm=True</td>
+ <td>4.06%</td>
+ <td>1, 2, 4, 3, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>258</td>
+ <td>L=200, level=flex, n=6, norm=True</td>
+ <td>4.05%</td>
+ <td>1, 2, 3, 4, 6, 5, 7, 8</td>
+</tr>
+<tr>
+ <td>259</td>
+ <td>L=150, level=flex, n=6, norm=True</td>
+ <td>4.01%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>260</td>
+ <td>L=100, level=flex, n=6, norm=True</td>
+ <td>3.94%</td>
+ <td>1, 2, 3, 4, 5, 6, 7, 8</td>
+</tr>
+<tr>
+ <td>261</td>
+ <td>L=50, level=flex, n=6, norm=True</td>
+ <td>3.74%</td>
+ <td>1, 4, 2, 3, 5, 6, 8, 7</td>
+</tr>
 </table>
 
-<h2>experiments/models.baseline.rlp_ngram.jsonl</h2>
+<h2>experiments/models.distance.llp.jsonl</h2>
 <table>
 <thead>
  <th>Rank</th>
@@ -1753,392 +2719,86 @@ tr:nth-child(2n-1) td {background-color: #eee;}
 </thead>
 <tr>
  <td>1</td>
- <td>L=3500, level=char, n=6, norm=False</td>
- <td>24.95%</td>
+ <td>n=4, norm=False, smoothing=lerp-0.6</td>
+ <td>32.10%</td>
  <td>1</td>
 </tr>
 <tr>
  <td>2</td>
- <td>L=4000, level=char, n=6, norm=False</td>
- <td>24.91%</td>
+ <td>n=5, norm=False, smoothing=lerp-0.6</td>
+ <td>31.52%</td>
  <td>1</td>
 </tr>
 <tr>
  <td>3</td>
- <td>L=3000, level=char, n=6, norm=False</td>
- <td>24.89%</td>
+ <td>n=5, norm=False, smoothing=lerp-0.55</td>
+ <td>31.51%</td>
  <td>1</td>
 </tr>
 <tr>
  <td>4</td>
- <td>L=4400, level=char, n=6, norm=False</td>
- <td>24.88%</td>
+ <td>n=5, norm=False, smoothing=lerp-0.5</td>
+ <td>31.46%</td>
  <td>1</td>
 </tr>
 <tr>
  <td>5</td>
- <td>L=4500, level=char, n=6, norm=False</td>
- <td>24.87%</td>
+ <td>n=4, norm=False, smoothing=add-0.00055</td>
+ <td>26.84%</td>
  <td>1</td>
 </tr>
 <tr>
  <td>6</td>
- <td>L=4200, level=char, n=6, norm=False</td>
- <td>24.87%</td>
+ <td>level=word, n=2, norm=True, smoothing=lerp-0.6</td>
+ <td>22.22%</td>
  <td>1</td>
 </tr>
 <tr>
  <td>7</td>
- <td>L=4300, level=char, n=6, norm=False</td>
- <td>24.84%</td>
+ <td>level=word, n=2, norm=True, smoothing=lerp-0.5</td>
+ <td>22.19%</td>
  <td>1</td>
 </tr>
 <tr>
  <td>8</td>
- <td>L=2500, level=char, n=6, norm=False</td>
- <td>24.77%</td>
+ <td>level=word, n=2, norm=True, smoothing=lerp-0.4</td>
+ <td>22.13%</td>
  <td>1</td>
 </tr>
 <tr>
  <td>9</td>
- <td>L=2000, level=char, n=6, norm=False</td>
- <td>24.69%</td>
+ <td>level=word, n=2, norm=True, smoothing=elerp-5000</td>
+ <td>22.09%</td>
  <td>1</td>
 </tr>
 <tr>
  <td>10</td>
- <td>L=2000, level=char, n=7, norm=False</td>
- <td>24.49%</td>
+ <td>level=word, n=2, norm=True, smoothing=elerp-10000</td>
+ <td>21.89%</td>
  <td>1</td>
 </tr>
 <tr>
  <td>11</td>
- <td>L=1500, level=char, n=6, norm=False</td>
- <td>24.47%</td>
+ <td>level=word, n=2, norm=True, smoothing=elerp-15000</td>
+ <td>21.69%</td>
  <td>1</td>
 </tr>
 <tr>
  <td>12</td>
- <td>L=1500, level=char, n=7, norm=False</td>
- <td>24.35%</td>
+ <td>level=word, n=2, norm=True, smoothing=add-0.001</td>
+ <td>20.52%</td>
  <td>1</td>
 </tr>
 <tr>
  <td>13</td>
- <td>L=2000, level=char, n=8, norm=False</td>
- <td>24.20%</td>
+ <td>level=word, n=2, norm=True, smoothing=add-0.00055</td>
+ <td>20.39%</td>
  <td>1</td>
 </tr>
 <tr>
  <td>14</td>
- <td>L=1000, n=5, level=char, norm=False</td>
- <td>24.13%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>15</td>
- <td>L=1000, level=char, n=6, norm=False</td>
- <td>24.11%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>16</td>
- <td>L=1000, level=char, n=7, norm=False</td>
- <td>23.94%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>17</td>
- <td>L=1500, level=char, n=8, norm=False</td>
- <td>23.90%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>18</td>
- <td>L=1000, level=char, n=8, norm=False</td>
- <td>23.56%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>19</td>
- <td>L=1000, n=4, level=char, norm=False</td>
- <td>23.40%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>20</td>
- <td>L=500, n=5, level=char, norm=False</td>
- <td>23.37%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>21</td>
- <td>L=500, n=4, level=char, norm=False</td>
- <td>22.80%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>22</td>
- <td>L=200, n=5, level=char, norm=False</td>
- <td>21.43%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>23</td>
- <td>L=200, n=4, level=char, norm=False</td>
- <td>20.87%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>24</td>
- <td>L=1000, n=3, level=char, norm=False</td>
- <td>20.70%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>25</td>
- <td>L=1000, n=5, level=char, norm=True</td>
- <td>20.34%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>26</td>
- <td>L=500, n=3, level=char, norm=False</td>
- <td>20.24%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>27</td>
- <td>L=1000, n=4, level=char, norm=True</td>
- <td>19.49%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>28</td>
- <td>L=500, n=5, level=char, norm=True</td>
- <td>19.27%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>29</td>
- <td>L=500, n=4, level=char, norm=True</td>
- <td>18.93%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>30</td>
- <td>L=200, n=3, level=char, norm=False</td>
- <td>18.76%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>31</td>
- <td>L=1000, n=2, level=word, norm=True</td>
- <td>18.25%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>32</td>
- <td>L=500, n=2, level=word, norm=True</td>
- <td>18.01%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>33</td>
- <td>L=200, n=5, level=char, norm=True</td>
- <td>17.32%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>34</td>
- <td>L=1000, n=3, level=word, norm=True</td>
- <td>17.32%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>35</td>
- <td>L=200, n=4, level=char, norm=True</td>
- <td>16.98%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>36</td>
- <td>L=1000, n=2, level=word, norm=False</td>
- <td>16.78%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>37</td>
- <td>L=500, n=3, level=word, norm=True</td>
- <td>16.76%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>38</td>
- <td>L=200, n=2, level=word, norm=True</td>
- <td>16.65%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>39</td>
- <td>L=500, n=2, level=word, norm=False</td>
- <td>16.58%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>40</td>
- <td>L=1000, n=3, level=word, norm=False</td>
- <td>16.41%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>41</td>
- <td>L=1000, n=4, level=word, norm=True</td>
- <td>16.35%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>42</td>
- <td>L=1000, n=3, level=char, norm=True</td>
- <td>16.26%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>43</td>
- <td>L=500, n=3, level=char, norm=True</td>
- <td>16.13%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>44</td>
- <td>L=500, n=3, level=word, norm=False</td>
- <td>16.01%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>45</td>
- <td>L=1000, n=4, level=word, norm=False</td>
- <td>15.85%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>46</td>
- <td>L=1000, n=5, level=word, norm=True</td>
- <td>15.78%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>47</td>
- <td>L=500, n=4, level=word, norm=True</td>
- <td>15.60%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>48</td>
- <td>L=200, n=2, level=word, norm=False</td>
- <td>15.55%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>49</td>
- <td>L=500, n=4, level=word, norm=False</td>
- <td>15.35%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>50</td>
- <td>L=1000, n=5, level=word, norm=False</td>
- <td>15.34%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>51</td>
- <td>L=200, n=3, level=word, norm=True</td>
- <td>15.24%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>52</td>
- <td>L=500, n=5, level=word, norm=True</td>
- <td>14.98%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>53</td>
- <td>L=200, n=3, level=word, norm=False</td>
- <td>14.87%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>54</td>
- <td>L=500, n=5, level=word, norm=False</td>
- <td>14.82%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>55</td>
- <td>L=200, n=3, level=char, norm=True</td>
- <td>14.60%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>56</td>
- <td>L=200, n=4, level=word, norm=False</td>
- <td>14.06%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>57</td>
- <td>L=200, n=4, level=word, norm=True</td>
- <td>13.96%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>58</td>
- <td>L=200, n=5, level=word, norm=False</td>
- <td>13.53%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>59</td>
- <td>L=200, n=5, level=word, norm=True</td>
- <td>13.33%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>60</td>
- <td>L=500, n=2, level=char, norm=False</td>
- <td>11.88%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>61</td>
- <td>L=200, n=2, level=char, norm=False</td>
- <td>10.55%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>62</td>
- <td>L=1000, n=2, level=char, norm=False</td>
- <td>10.16%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>63</td>
- <td>L=200, n=2, level=char, norm=True</td>
- <td>6.36%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>64</td>
- <td>L=500, n=2, level=char, norm=True</td>
- <td>6.27%</td>
- <td>1</td>
-</tr>
-<tr>
- <td>65</td>
- <td>L=1000, n=2, level=char, norm=True</td>
- <td>3.68%</td>
+ <td>level=word, n=2, norm=True, smoothing=add-0.0001</td>
+ <td>19.56%</td>
  <td>1</td>
 </tr>
 </table>
@@ -2372,6 +3032,22 @@ tr:nth-child(2n-1) td {background-color: #eee;}
  <td>L=200, level=char, n=6, norm=False</td>
  <td>16.93%</td>
  <td>1</td>
+</tr>
+</table>
+
+<h2>experiments/models.ensemble.majority_scap.jsonl</h2>
+<table>
+<thead>
+ <th>Rank</th>
+ <th>Hyper parameters</th>
+ <th>Mean accuracy</th>
+ <th>Folds tested</th>
+</thead>
+<tr>
+ <td>1</td>
+ <td></td>
+ <td>21.89%</td>
+ <td>1, 1, 1</td>
 </tr>
 </table>
 
