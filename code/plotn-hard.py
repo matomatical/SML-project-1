@@ -13,7 +13,7 @@ def main():
             ['word',  True,  [0.1376,  0.128,  0.1196, 0.1145, 0.1118]]]
 
     plt.rc('text', usetex=True)
-    plt.rc('font', family='serif')
+    plt.rc('font', family='serif', size=10)
 
     fig, ax = plt.subplots(1, 1, figsize=(3.59, 1.6))
     # https://stackoverflow.com/a/47403507 (ported from WSTA script)
@@ -27,15 +27,15 @@ def main():
     COLOR3 = "tab:purple"
 
 
-    ax.plot(NS, DATA[0][2], markersize=MARKSIZE*1.2, marker="^", linestyle="--", color=COLOR1)
-    ax.plot(NS, DATA[1][2], markersize=MARKSIZE*1.2, marker="^", linestyle=":",  color=COLOR1)
+    ax.plot(NS, DATA[0][2], markersize=MARKSIZE*1.2, marker="v", linestyle="--", color=COLOR1)
+    ax.plot(NS, DATA[1][2], markersize=MARKSIZE*1.2, marker="v", linestyle=":",  color=COLOR1)
     ax.plot(NS, DATA[2][2], markersize=MARKSIZE*1.4, marker="*", linestyle="--", color=COLOR2)
     ax.plot(NS, DATA[3][2], markersize=MARKSIZE*1.4, marker="*", linestyle=":",  color=COLOR2)
     ax.plot(NS, DATA[4][2], markersize=MARKSIZE,     marker="p", linestyle="--", color=COLOR3)
     ax.plot(NS, DATA[5][2], markersize=MARKSIZE,     marker="p", linestyle=":",  color=COLOR3)
 
 
-    handle_bytes = mlines.Line2D([],[],color=COLOR1, markersize=MARKSIZE,     marker="^", label="bytes")
+    handle_bytes = mlines.Line2D([],[],color=COLOR1, markersize=MARKSIZE,     marker="v", label="bytes")
     handle_chars = mlines.Line2D([],[],color=COLOR2, markersize=MARKSIZE*1.4, marker="*", label="chars.")
     handle_words = mlines.Line2D([],[],color=COLOR3, markersize=MARKSIZE,     marker="p", label="words")
     handle_raw = mlines.Line2D([],[],color="k", linestyle="--", label="raw text")
