@@ -12,7 +12,7 @@ def main():
             ['word',  False, [0.1292,  0.1258, 0.1196, 0.116,  0.1144]],
             ['word',  True,  [0.1376,  0.128,  0.1196, 0.1145, 0.1118]]]
 
-    fig, ax = plt.subplots(1, 1, figsize=(4, 2.2))
+    fig, ax = plt.subplots(1, 1, figsize=(3.59, 2.22))
     # https://stackoverflow.com/a/47403507 (ported from WSTA script)
     MARKSIZE  = 8
     MARKSIZE2 = MARKSIZE**2
