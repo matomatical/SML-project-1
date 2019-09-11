@@ -12,7 +12,10 @@ def main():
             ['word',  False, [0.1292,  0.1258, 0.1196, 0.116,  0.1144]],
             ['word',  True,  [0.1376,  0.128,  0.1196, 0.1145, 0.1118]]]
 
-    fig, ax = plt.subplots(1, 1, figsize=(3.59, 2.22))
+    plt.rc('text', usetex=True)
+    plt.rc('font', family='serif')
+
+    fig, ax = plt.subplots(1, 1, figsize=(3.59, 1.6))
     # https://stackoverflow.com/a/47403507 (ported from WSTA script)
     MARKSIZE  = 8
     MARKSIZE2 = MARKSIZE**2
@@ -41,13 +44,14 @@ def main():
                         bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=3, mode="expand", borderaxespad=0.)
     ax.add_artist(leg1)
     leg2 = plt.legend(handles=[handle_raw, handle_pre],
-                        bbox_to_anchor=(0., 1.18, 1., .102), loc=3, ncol=2, mode="expand", borderaxespad=0.)
+                        bbox_to_anchor=(0., 1.2, 1., .102), loc=3, ncol=2, mode="expand", borderaxespad=0.)
 
     ax.set_yticklabels([f'{x*100:.0f}' for x in plt.gca().get_yticks()]) 
     ax.xaxis.set_major_locator(mtick.MaxNLocator(integer=True))
+    ax.set_ylim([0.06,0.23])
 
     plt.xlabel("$n$")
-    plt.ylabel("Accuracy (%)")
+    plt.ylabel("Accuracy (\%)")
     # fig.tight_layout()
 
     # plt.show()
