@@ -56,6 +56,8 @@
 
 \usepackage{booktabs}
 \usepackage{enumitem}
+\usepackage[font=footnotesize]{caption}
+
 
 \title{COMP90051 Statistical Machine Learning Project 1 Report}
 \author{
@@ -116,7 +118,7 @@ and we introduce new distance metrics of our own design.
 % and we introduce a new distance metric of our own design.
 
 
-\section{Features}
+\section{Feature classes}
 We explore the appropriateness of various dynamic feature
 classes for our authorship attribution task, including
 character, byte, and word $n$-grams, for $n = 2,3,4,5,6$.
@@ -142,11 +144,10 @@ by zero or more CWs.
 % word $n$-grams\supercite{schwartz2013authorship}.
 
 \paragraph{Pre-processing}
-We examine the effect of tokenising and normalising tweets before
-extracting $n$-gram features, compared to using raw text.
-In particular, we split tweets at word/punctuation
-boundaries and normalise rarely repeating tokens
-(e.g. dates, time, numbers) into standard tags.
+We optionally split tweets at word and punctuation boundaries and
+normalise rarely-repeating tokens (e.g. dates, time, numbers)
+before extracting $n$-gram features. To examine the effect of
+this pre-processing, we also compare to using raw text.
 
 % "To assist with distinguishing between the structure and content of a tweet" was nice, does this fit?
 % Sounds much more compact. 
@@ -164,14 +165,20 @@ by selecting the author with the most tweets in the corpus.}
 The models are as follows.
 
 \paragraph{Common N-Gram (CNG)}
-The CNG model\supercite{kevselj2003n} defines an author's profile as the normalised frequencies of the $L$ most common $n$-grams across all of the author's tweets, where $L$ is a hyper-parameter.
+The CNG model\supercite{kevselj2003n} defines an author's profile
+as the normalised frequencies of the $L$ most common $n$-grams
+across all of the author's tweets, where $L$ is a hyper-parameter.
 $d_{cng}$ measures distance between author $a$ and tweet $t$ as
 $$
 d_{cng}(a, t) =
     \smashoperator{\sum_{x \in X_a \cup X_t}}\ 
         {\left ( \frac{2 \cdot (P_a(x) - P_t(x))}{P_a(x) + P_t(x)} \right )}^2
 $$
-where $P_a(x)$ is the normalised frequency of $n$-gram $x$ in $a$'s profile, $P_t(x)$ is the normalised frequency of $n$-gram $x$ in $t$, $X_a$ is the set of $n$-grams in author $a$'s profile (i.e. their $L$ most frequent $n$-grams), and $X_t$ is the set of $n$-grams in $t$.
+where $P_a(x)$ is the normalised frequency of $n$-gram $x$ in
+$a$'s profile, $P_t(x)$ is the normalised frequency of $n$-gram
+$x$ in $t$, $X_a$ is the set of $n$-grams in author $a$'s profile
+(i.e. their $L$ most frequent $n$-grams), and $X_t$ is the set
+of $n$-grams in $t$.
 
 This sum over all $n$-grams in $X_a \cup X_t$ is expensive
 to compute for every author, for every test tweet.
@@ -185,8 +192,9 @@ d_{cng} (a, t) =
         - 8 \cdot |X_a \cap X_t| + C
 $$
 where $C=4 \cdot (L + |X_t|)$ is a constant.
-We can efficiently compute this sum (and $|X_a \cap X_t|$) using an inverted index.
-% (see derivation in appendix) % ???
+We can efficiently compute this sum (and $|X_a \cap X_t|$)
+using an inverted index.
+
 
 \paragraph{Source Code Author Profile (SCAP)} In SCAP\supercite{frantzeskou2006effective}
 an author's profile comprises the set of the $L$ most common
@@ -320,36 +328,34 @@ by randomly partitioning our labelled dataset in two, as follows:
 \paragraph{Feature engineering}
 
 Across our experiments with each learner/feature class combination,
-we observe, generally,
-(1) character $n$-grams are most effective for $n=4,5,6$, and without
-applying pre-processing;
+we observe
+(1) character $n$-grams are most effective for $n=4,5,6$, and with raw
+    text input;
 (2) byte $n$-grams perform indistinguishably from character $n$-grams;
 (3) word $n$-grams perform best for $n=2$, where they benefit slightly
-    from pre-processing; and
+    from our pre-processing; and
 (4) flexible pattern $n$-grams perform best with $n=2,3$.
-Figure \ref{fig:features} exemplifies these relationships.
+Figure~\ref{fig:features} exemplifies these relationships.
+For brevity, we report only results from learners trained on these
+high character $n$-grams and low word/flexible pattern $n$-grams below.
 
 \begin{figure}[h]
     \centering
-    \showthe\columnwidth
     \includegraphics[
         width=\columnwidth,
-        trim=0.8em 1.4em 0em 0em,
+        trim=0 2ex 0 1.6ex,
         clip
     ]{report/effect-of-n.pdf}
-    \caption{Pre-processing and $n$ impact accuracy, SCAP, fixed $L=300$.}
+    \caption{Effect of pre-processing and $n$ on SCAP, fixed $L=300$.}
     \label{fig:features}
 \end{figure}
-
-For brevity, we report only results from learners trained on these high
-character $n$-grams and low word/flexible pattern $n$-grams.
 
 % plot of SCAP accuracy vs. n for various levels, normalisation
 
 \paragraph{Tuning hyper-parameters}
 
-For each model, we tune our hyper-parameter using grid search
-optimisation and the reduced training data, as follows:
+For each learner/feature class combination, we tune our hyper-parameter
+using grid search optimisation on the reduced training data, as follows:
 
 We tune the profile length $L$ for SCAP using an 8-fold cross-validated
 grid search over the reduced training data.
@@ -368,20 +374,17 @@ we perform a grid search using holdout validation on the reduced training
 data, evaluating on 1000 tweets (0.3\%).
 Due to time constraints, we only tune on character $n$-grams.
 
-For our ensemble, we see the best results when combining
-seven SCAP base models using character 2--6-grams,
-word 2-grams, and flexible pattern 2-grams, respectively.
+For our ensemble, we try various combinations of features, and use
+holdout validation to select the best combination
+(seven SCAP base models using character 2--6-grams, word 2-grams,
+and flexible pattern 2-grams, respectively).
 
 
 \paragraph{Model selection}
-After turning each model/feature class combination using some 
-partition(s) of the reduced training data, we re-train the
-best-performing configurations on the entire reduced training set,
-and evaluate their accuracy on our validation data.
-We report the results in table \ref{tab:devresults}.
-
-
-
+After turning each learner/feature class combination as above,
+we re-train the best-performing configurations on the entire
+reduced training set, and measure accuracy with our validation
+data. We report the results in table \ref{tab:devresults}.
 
 \begin{table}[h]
 \centering
@@ -501,13 +504,7 @@ information into account.
 Since authors' $n$-gram distribution are indeed highly
 non-uniform, interpolation smoothing is theoretically
 more appropriate. % TODO: Reword this last sentence.
-% If there's space (there's not),
-% I might like to mention that we (I, at least) hypothesised
-% method iii to be strongest, because empirical normalised frequencies
-% should be more reliable than corpus information with more tweets
-% for a but this was not the case empirically.
 
-% Example citations of reviews \cite{rocha2016authorship, layton2010authorship, bhargava2013stylometric}, features from \textcite{schwartz2013authorship}, various models,\supercite{layton2012recentred, kevselj2003n, frantzeskou2006effective} and a tutorial\cite{layton2014tutorial}!
 
 \printbibliography
 
