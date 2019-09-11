@@ -145,7 +145,7 @@ by zero or more CWs.
 
 \paragraph{Pre-processing}
 We optionally split tweets at word and punctuation boundaries and
-normalise rarely-repeating tokens (e.g. dates, time, numbers)
+normalise rarely-repeating tokens (e.g. dates, times, numbers)
 before extracting $n$-gram features. To examine the effect of
 this pre-processing, we also compare to using raw text.
 
@@ -382,9 +382,9 @@ and flexible pattern 2-grams, respectively).
 
 \paragraph{Model selection}
 After turning each learner/feature class combination as above,
-we re-train the best-performing configurations on the entire
-reduced training set, and measure accuracy with our validation
-data. We report the results in table \ref{tab:devresults}.
+we re-train the tuned configurations on the entire reduced
+training set, and measure accuracy with our validation data.
+Table \ref{tab:devresults} summarises our results.
 
 \begin{table}[h]
 \centering
@@ -413,37 +413,46 @@ Ensemble    &     & \multicolumn{6}{c}{ ---23.4--- }\\ % (char23456grams+word2gr
 
 We re-train our best performing model/feature class combination
 (SPaCE ii, character 4-grams) on the entire labelled dataset for submission,
-and achieve a public score of 34.7\%.
+achieving a public score of \textbf{34.7\%}.
 
 \section{Critical analysis}
 
-% Should we spend any time discussing the tuning of individual hyperparameters?
-    % L: too small and not enough broad information is captured in the profile, too large and it begins to capture noise as well (low counts are not reliable)
-    % smoothing parameters: no smoothing is really bad. too much smoothing washes out all of the information in the distributions. duh?
-% Should we say something about features, like the differences between words v. chars? v. bytes v. flexible patterns? How they work together in an ensemble?
-    % flex patterns v. words: trading off structure/content. maybe in this dataset content is more reliable.
-    % words v. chars: perhaps the lower density of words (fewer ngrams per tweet) exacerbates our lack-of-data-per-author problem, crippling these profile-baed methods (profiles are unreliable).
-% Should we discuss the effect of normalisation? Or including a prior in some way? (we don't really have data for that)
-% say something about models, why is simple RLP best local profile method?
-% why is SPaCE so much better?
-    % is it because we have so little data, so smoothing is critical, and truncation-based methods are 
-    % is it because it corresponds to maximising the (log) likelihood of the tweet given the profile n-gram distributions as a generative model, with an independence assumption, even though that's naive?
-    % an obvious tradeoff is that it's much slower than the other methods. Are the other methods 
-% Why the heck does SRLP work at all?
-
+% Matt: Should we leaf this section with the SPaCE discussion?
+% Since it's our strongest model.
 
 % Compare local profile methods and compare to results found in literature - Alice
-\paragraph{CNG v. SCAP v. RLP} Recent works show RLP out-performs CNG on large documents with few authors\supercite{layton2012recentred}, and SCAP out-performs CNG when there is limited training data per author\supercite{frantzeskou2006effective}. Our results show CNG outperforms both SCAP and RLP. We attribute these contrasting findings to how our dataset differs. RLP's measure of distinctiveness is less effective when there is limited training data per author because there is less data to compare distinctiveness. CNG and SCAP are comparative in performance until an authors profile becomes smaller than L\supercite{frantzeskou2006effective}. Our implementation overcomes this issue by padding an authors profile with unmatchable $n$-grams until it is at least L in length. This modification allows CNG to perform effectively on the dataset.
+\paragraph{CNG, SCAP, RLP} Recent works show RLP outperforms CNG on large documents with few authors\supercite{layton2012recentred}, and SCAP outperforms CNG when there is limited training data per author\supercite{frantzeskou2006effective}. Our results show CNG outperforming both SCAP and RLP. We attribute these contrasting findings to dataset differences---RLP's measure of distinctiveness is % <-- Matt: 'may be'?
+less effective when there is limited training data per author because there is less data to compare distinctiveness. % <-- Matt: This seems a little vague 
+CNG and SCAP are comparable in performance until an author's profile becomes smaller than $L$\supercite{frantzeskou2006effective}.
+% Our implementation overcomes this issue by padding an authors profile with unmatchable $n$-grams until it is at least L in length.
+% Matt: ^^ I think this is not quite true of our implementation (as far as I followed it)
+%          maybe the following sentence instead?
+Our reformulation overcomes this issue by correcting for profile length, as if to pad out an authors profile with $n$-grams until it has length $L$.
+This modification may help explain CNG's effectiveness.
 
+% Matt: NOTE! I am grouping together the discussion of ngrams and
+%             ensemble improvement into a single labelled paragraph:
+\paragraph{Features}
 % compare character grams versus word and flex grams
 % compare features. - Marvin
-\paragraph{$n$-grams}
-Previous work finds that $n=4$ for character $n$-grams is the most effective for Twitter data\supercite{layton2010authorship}, dropping in accuracy for $n<4$ and $n>4$. 
-The study differs by using only few authors, around 50, whereas we have over 9,000. 
+% \paragraph{$n$-grams}
+Previous work\supercite{layton2010authorship} finds that character 4-grams
+are the most effective feature class for Twitter data, with a drop in
+accuracy for $n<4$ and $n>4$.
+The study considered only around 50 authors (cf. our 9,297). 
 Our tests show that increasing $n$ tends to increase accuracy. 
-Word and flexible pattern $n$-grams perform worse in isolation than character $n$-grams. % there's no talk on what word and flex actually represent about the text
+% Matt: ^^ Could we say 'Our tests show that character 5-grams are more effective overall.'? 
+%          Just because that's what the evaluation data we have included seems to say
+
+% The discussion shifts into a new idea here, so I'm inserting a blank line/paragraph break.
+% Matt: vv I think this overlaps considerably with the next paragraph on ensemble result
+%          perhaps we can remove this, or merge?
+Word and flexible pattern $n$-grams perform worse in isolation than character $n$-grams.
+% there's no talk on what word and flex actually represent about the text
 While not the most effective alone, using a combination of these features simultaneously can improve accuracy\supercite{rocha2016authorship}.
-However, the memory and time required to do so make it infeasible on any of our machines. 
+However, the memory and time required to do so make it infeasible on any of our machines.
+% Matt: ^^ This doesn't seem super relevant
+% Matt: vv Are these other suggestions to talk about?
 % Character $n$-grams consistently outperform word and flexible pattern $n$-grams. 
 % % Different levels of $n$-gram captures different information regarding an author's writing habits.
 % Increasing $n$ for character $n$-grams tend to produce more accurate results (except in SPaCE).
@@ -454,34 +463,46 @@ However, the memory and time required to do so make it infeasible on any of our 
 % % However doing so also assumes that authors do repeat relatively long sections of text, otherwise learned $n$-grams will never appear in the test data. % learned? common? $n$-grams seen in training?
 % % what do I say about words and flex
 % Word $n$-grams performing consistently worse than character $n$-grams suggest that semantic information of a text is not as important as the raw information itself.
+% % Matt: 'raw information' is quite vague, what do you mean?
+% %       we also discussed mentioning the following points on Tuesday night:
+% %       % flex patterns v. words: trading off structure/content.
+% %       % maybe in this dataset content is more reliable.
+% %       % words v. chars: perhaps the lower density of words
+% %       % (fewer n-grams per tweet) exacerbates our lack-of-data-
+% %       % per-author problem, crippling these profile-based methods
+% %       % (profiles are unreliable without much data).
 % % Longer character $n$-grams can in a sense substitute shorter word $n$-grams by capturing the $n$-grams that span multiple words while also capturing word uni-grams (1-gram).
 % Flexible pattern $n$-grams performed the worse of all features.
 % As it reflects the structure of a text rather than the contents, it may perform more effectively at longer texts. 
 % However, our data comprises of texts with limited length, as such distinguishing structures may not emerge. 
 % % However, with the given data we are dealing with the 140 character limit of a Tweet, there is not much room for distinguishing structure to emerge. % does that make sense? Do we need to justify why it didn't work?
-
-
-
+% Matt: I don't think we need to justify why it didn't work. I think there's probably
+%       room for 'distinguishing structure' in tweets, especially through use of
+%       punctuation. but like we said the other night, maybe content (words) are more
+%       reliable overall in this dataset. it might also be the density problem (fewer
+%       words/flex pattern ngrams fit in a tweet than character ngrams do).
 
 % Combining the features in the ensemble performed better than word and flexible pattern by itself. Suggests ... orthogonal? - Shared
-\paragraph{Ensemble} Char, word and flexible pattern $n$-grams are prone to error because of noise in the data. Combining the features in the ensemble model captures more information about authorship, suggesting that these features are orthogonal. An area of future work is to investigate more sophisticated methods to combine these features to build a more robust model. 
-% suggests that independently each feature is prone to error (because noise?) but over multiple features the model is more robust? 
+% \paragraph{Ensemble}
+Character, word and flexible pattern $n$-grams are prone to
+error because of noise in the data.
+Combining the features in the ensemble model captures more
+information about authorship, suggesting that these features
+are orthogonal.
+Future work may investigate more sophisticated methods for
+combining features into a more robust model. 
 
-% yeah maybe think of it like: if everything about authorship that you could capture with word grams was already
-% captured and utilised by the char models, then adding them together wouldn't help. it'd be like the information
-% contained in the word models was a subset of the information in the character models.
-% 'capture more information about authorship'? yeah that sounds about right
-% ensemble is better -> it must capture more about authorship -> the features are orthogonal. -> future work investigate more elaborate ways to combine features (wraps it up nicely)
-% that's perfect :) sweet thanks :)
-
-% combining would  capture more information about authorship -> because features are orthogonal 
-% minimise the errors is not quite the right phrase though
-% hey what did you mean when the features are "orthogonal"?
-% but the idea is that together  
+% Matt: How about:
+% Combining multiple feature classes working at different `levels'
+% within tweets in our SCAP ensemble outperformed each individual
+% feature class. This suggests that different classes are capturing
+% orthogonal aspects of `authorship'.
+% Future work may investigate more sophisticated methods for
+% combining features into a robust model.
 
 % SPaCE is better than all profile methods. Why? - Matt
-% \paragraph{SPaCE}
-\paragraph{SPaCE} We observe that SPaCE models outperform all other models for
+\paragraph{SPaCE}
+We observe that SPaCE models outperform all other models for
 character-level $n$-grams.
 Minimising $d_{space}$ corresponds to maximising
 tweet (log) likelihood assuming tweets are sequences of
