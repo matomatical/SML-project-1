@@ -94,7 +94,8 @@ class Model:
         # only those ngrams in the top L)
         similarity = {}
         for author, profile_length in self.author_profile_length.items():
-            similarity[author] = numerator[author] / profile_length
+            if profile_length:
+                similarity[author] = numerator[author] / profile_length
 
         # we could compute the distance as 1-simularity, or just maximise
         # similarity now, to make our prediction:
