@@ -68,7 +68,7 @@ YOU MUST FIRST RUN FLEXIBLE_PATTERNS.PY TO COUNT HIGH FREQUENCY WORDS
 """
  
 class Label(Enum):
-  HFW = 0;
+  HFW = 0
   CW = 1
   def __repr__(self):
     return self.name
