@@ -87,7 +87,7 @@ class Model:
             P_a = np.array(P_a)
             P_t = np.array(P_t)
 
-            distances[author] = 1 - distance.cosine(P_t, P_a)
+            distances[author] = distance.cosine(P_t, P_a)
 
         _, dist = min(distances.items(), key = lambda x: x[1])
 
