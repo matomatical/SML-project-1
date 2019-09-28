@@ -65,13 +65,17 @@ Matthew Farrugia-Roberts}
 
 \maketitle
 
+
 \section{Introduction}
 For our class project we develop a system for automated 
 authorship attribution of Twitter messages (`tweets'). We
 are given a dataset of 328,932 tweets of known authorship,
 and 35,437 anonymous tweets to be attributed to one of
 9,297 authors as part of a class Kaggle competition.\footnote{
-\url{https://www.kaggle.com/c/whodunnit}}
+\url{https://www.kaggle.com/c/whodunnit},
+ranking 3\textsuperscript{rd} of 162 teams
+in public and private evaluation
+(team name {\tt the\_shrunken\_stardust}).}
 
 % Outline the two prevailing frameworks
 Existing work on tweet authorship attribution\supercite{rocha2016authorship, bhargava2013stylometric, schwartz2013authorship}
@@ -109,15 +113,17 @@ Multi-class classification algorithms may struggle to
 generalise after seeing so few examples for most classes.
 
 % Hit 'em with one of these profile-based method sales pitches
-After initially promising results from a profile-based
-baseline, we elect to focus on deeply exploring profile-based
-methods, in the hope that these will
-scale more capably to our `extreme' dataset.
+After seeing initially promising results from a profile-based
+baseline,
+we elect to focus on deeply exploring profile-based
+methods, in the hope that these will scale more capably to our
+`extreme' dataset.
 We explore a wide range of profile-based models from recent
 literature.
 Furthermore, we reformulate existing distance metrics
 to make them computationally tractable on our large dataset,
 and we introduce a new distance metric of our own design.
+% yielding improved performance over existing models.
 
 
 
@@ -187,8 +193,8 @@ of $n$-grams in $t$.
 This sum over all $n$-grams in $X_a \cup X_t$ is expensive
 to compute for every author, for every test tweet.
 We exploit the sparsity of our $n$-gram features by using
-an equivalent formulation in terms of a sum over only
-$X_a \cap X_t$:
+an equivalent\footnotemark~formulation in terms of a sum over
+only $X_a \cap X_t$:
 $$
 d_{cng} (a, t) =
     \smashoperator{\sum_{x \in X_a \cap X_t}}\ 
@@ -198,7 +204,7 @@ $$
 where $C=4 \cdot (L + |X_t|)$ is a constant.
 We can efficiently compute this sum (and $|X_a \cap X_t|$)
 using an inverted index.
-
+\footnotetext{See notes on reformulating CNG in appendix A.1.}
 
 \paragraph{Source Code Author Profile (SCAP)} In SCAP\supercite{frantzeskou2006effective}
 an author's profile comprises the set of the $L$ most common
@@ -208,6 +214,9 @@ $$
 % d_{scap}(a, t) = 1 - \frac{|X_a \cap X_t|}{L} % display fraction (looks much nicer)
 d_{scap}(a, t) = 1 - |X_a \cap X_t| / L     % inline fraction (if space needed)
 $$
+
+As $d_{scap}$ is already in terms of only $X_a \cap X_t$, we can
+efficiently compute it for many authors using an inverted index.
 
 \paragraph{Recentered Local Profile (RLP)} The RLP method\supercite{layton2012recentred}
 defines an author's profile as the $L$ $n$-grams that have
@@ -234,9 +243,11 @@ d_{rlp}(a, t) = 1 -
     \cdot \smashoperator{\sum_{x \in X_a \cup X_t}} RP_t(x)^2}
 }
 $$
+
 As with CNG, this calculation is prohibitively expensive at our scale.
 An exact formulation in terms of only $X_a \cap X_t$ is not possible,
-so we approXimate RLP (XRLP) instead:
+so we approXimate RLP (XRLP) instead\footnotemark:
+\footnotetext{See derivation of XRLP in appendix A.2.}
 $$
 d_{xrlp}(a, t) = 1 -
 \frac{\displaystyle
@@ -273,7 +284,8 @@ including for unseen $n$-grams.
 We interpret these normalised frequencies as a probability
 distribution over the set of all $n$-grams, and use the cross
 entropy between the probability distributions of $t$ and $a$
-(plus a per-author offset) as our distance metric:
+(plus a per-author offset capturing author prolificacy)
+as our distance metric:
 $$
 d_{space}(a, t) =
     - \ln (P(a)) / N_t
@@ -289,6 +301,10 @@ $P'_a(x)$ is defined in terms of $P_a(x)$ using either
       an amount decaying exponentially with $N_a$,
       the total number of $n$-grams in $a$'s tweets.
 $K$, $\alpha$, and $k$ are hyper-parameters.
+
+While smoothing destroys the sparsity of profiles, it's still
+possible to efficiently compute $d_{space}$ for many authors.\footnotemark
+\footnotetext{See notes on computing SPaCE in appendix A.3.}
 
 \paragraph{Ensemble}
 We create a simple ensemble in an attempt to combine multiple
@@ -309,10 +325,10 @@ and comparatively evaluating each combination of learner and dynamic feature cla
 
 \paragraph{Data split}
 
-% Aside from through the public leaderboard scores (derived from a
-% small number of tweets), we can't know the true authors of the
-% unlabelled tweets ahead of the competition end time. This means we
-We
+Aside from through the public leaderboard scores (derived from a
+small number of tweets), we can't know the true authors of the
+unlabelled tweets ahead of the competition end time. This means we
+% We
 are unable to effectively use our unlabelled tweets to compare
 the accuracy of different learner/feature class combinations,
 since the public leaderboard scores are derived from a small
@@ -417,12 +433,15 @@ Ensemble    &     & \multicolumn{6}{c}{ ---23.4--- }\\ % (char23456grams+word2gr
 \end{table}
 
 We re-train our best performing model/feature class combination
-(SPaCE ii, character 4-grams) on the entire labelled dataset for submission,
-achieving a public score of \textbf{34.7\%}.
+(SPaCE ii, character 4-grams) on the entire labelled dataset for
+submission,
+achieving a public score of \textbf{34.7\%}.\footnote{The same 
+model achieves \textbf{35.0\%} accuracy on the private dataset.}
 
 \section{Critical analysis}
 
-% Matt: I think maybe we should LEAD this section with the SPaCE discussion? Since it's our strongest model.
+% Matt: I think maybe we should LEAD this section with the
+% SPaCE discussion? Since it's our strongest model.
 
 % SPaCE is better than all profile methods. Why? - Matt
 \paragraph{SPaCE}
@@ -434,7 +453,7 @@ $n$-grams drawn independently from their author's $n$-gram
 probability distribution.
 It's somewhat surprising to see this level of performance,
 given the naivety of this assumption.
-However, SPaCE use a much richer profile representation
+However, SPaCE uses a much richer profile representation
 than other methods, with smoothing providing effective
 regularisation. This may help it to make finer grained
 distinctions between authors.
@@ -442,8 +461,14 @@ distinctions between authors.
 The choice of smoothing method is critical.
 We see additive smoothing (i) outperformed by interpolation
 smoothing (ii, iii).
-Additive smoothing corresponds to assuming a uniform prior
-on $n$-gram probability distributions when estimating profiles,
+Additive smoothing corresponds to
+% "assuming a uniform prior on $n$-gram probability distributions
+% when estimating profiles,"
+% NO! That's subtly wrong, it's a non-uniform distribution over
+% probability distributions.
+MAP estimation of profiles with a prior distribution 
+(over $n$-gram distributions) concentrated about the uniform
+$n$-gram distribution,
 while interpolation methods take corpus-level frequency
 information into account.
 Since authors' $n$-gram distribution are indeed highly
@@ -459,11 +484,12 @@ author\supercite{frantzeskou2006effective}.
 In contrast, we see CNG outperforming both SCAP and (X)RLP.
 XRLP may be under-performing due to our small (per author)
 dataset---profiles based on recentered frequencies may be unreliable
-when computed based on noisy $n$-gram counts.
-CNG's under-performance in \cite{frantzeskou2006effective} with profiles
-shorter than $L$ may be due to a flaw in the distance metric, which
-our reformulation implicitly overcomes (we correct for short profiles by
-using a constant offset term, effectively assuming all authors have at least $L$ $n$-grams).
+when computed from noisy $n$-gram counts.
+CNG's under-performance in \cite{frantzeskou2006effective} with
+profiles shorter than $L$ may be due to a flaw in the distance
+metric, which our reformulation implicitly overcomes (we correct
+for short profiles by using a constant offset term, effectively
+assuming all authors have at least $L$ $n$-grams).
 
 % compare character grams versus word and flex grams - Marvin
 \paragraph{Features}
@@ -515,7 +541,8 @@ trade-off.
 While word $n$-grams are not necessarily superior in general, it seems
 that content is more salient in our task.
 
-% Combining the features in the ensemble performed better than word and flexible pattern by itself. Suggests ... orthogonal? - Shared
+% Combining the features in the ensemble performed better than word
+% and flexible pattern by itself. Suggests ... orthogonal? - Shared
 Character, word and flexible pattern $n$-grams are individually
 incomplete representations of text.
 Combining the features in the ensemble model must capture more
@@ -541,5 +568,8 @@ combining multiple dynamic feature classes into a more robust model.
 
 
 \printbibliography
+
+% TODO: Add appendix
+
 
 \end{document}
