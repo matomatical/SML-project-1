@@ -2,13 +2,6 @@
 
 \usepackage[top=2cm,bottom=2cm,left=1.5cm,right=1.5cm]{geometry}
 
-\usepackage{lipsum}
-
-\usepackage{abstract}
-\renewcommand{\abstractnamefont}{\normalfont\normalsize\bfseries}
-\renewcommand{\abstracttextfont}{\normalfont\small}
-\setlength{\absleftindent}{1em}
-\setlength{\absrightindent}{2em}
 
 \usepackage{titlesec}
 \titleformat{\section}[block]{\Large\bfseries\filcenter}{}{}{}
@@ -31,7 +24,7 @@
 \addbibresource{references.bib}
 \renewcommand*{\bibfont}{\footnotesize}
 % Get the citations as superscipts (it's like wikipedia!?)
-% thanks https://tex.stackexchange.com/questions/114987/biblatex-supercite-with-square-brackets-and-grouped
+% thanks https://tex.stackexchange.com/questions/114987/
 \DeclareCiteCommand{\supercite}[\mkbibsuperscript]
   {\usebibmacro{cite:init}%
    \let\multicitedelim=\supercitedelim
@@ -46,7 +39,6 @@
    \usebibmacro{cite:comp}}
   {}
   {\usebibmacro{cite:dump}\bibclosebracket}
-\newcommand{\tocite}{\textsuperscript{[\textcolor{blue}{citation needed}]}}
  
 % thanks https://tex.stackexchange.com/a/5255 
 \usepackage{amsmath}
@@ -57,6 +49,7 @@
 \usepackage{booktabs}
 \usepackage{enumitem}
 \usepackage[font=footnotesize]{caption}
+
 
 
 \title{COMP90051 Statistical Machine Learning Project 1 Report}
@@ -73,15 +66,15 @@ Matthew Farrugia-Roberts}
 \maketitle
 
 \section{Introduction}
-For our class project we develop a system for automated
+For our class project we develop a system for automated 
 authorship attribution of Twitter messages (`tweets'). We
 are given a dataset of 328,932 tweets of known authorship,
 and 35,437 anonymous tweets to be attributed to one of
-9,297 authors as part of a class Kaggle competition\footnotemark.
-\footnotetext{\url{https://www.kaggle.com/c/whodunnit}}
+9,297 authors as part of a class Kaggle competition.\footnote{
+\url{https://www.kaggle.com/c/whodunnit}}
 
-Existing work on authorship attribution of twitter
-messages\supercite{rocha2016authorship, bhargava2013stylometric, schwartz2013authorship}
+% Outline the two prevailing frameworks
+Existing work on tweet authorship attribution\supercite{rocha2016authorship, bhargava2013stylometric, schwartz2013authorship}
 frames the problem as either
 (1) supervised multi-class classification, training models on
 labelled (known-author) tweets to predict the label (author)
@@ -89,13 +82,23 @@ of test tweets, or
 (2) an author profiling task, collating all tweets from an
 author into a single profile and attributing each anonymous
 tweet by finding the closest profile under some distance metric.
-Moreover, two broad classes of features are shown to
-be effective under these frameworks:
-`static' features are hand-crafted features capturing various
-stylometric aspects of writing in a given language; and
+% And the two prevailing feature classes
+Moreover, two broad classes of features are established as
+effective:
+`Static' features are hand-crafted features capturing various
+stylometric aspects of writing; and
 `dynamic' features are lower level patterns automatically
 determined from data.
 
+% EXPLAIN WHY WE CHOSE OUR FEATURES
+Dynamic features are ideal for their simplicity and for their
+robustness to our informal, non-standard and multi-lingual
+text. We explore various dynamic feature classes including
+byte, character, word, and flexible pattern $n$-grams.
+
+% THEN DISCUSS OUR CHOICE OF MODELS: PROFILE-BASED OVER
+% TRADITIONAL CLASSIFIERS
+% Shut down traditional classification approach:
 Our dataset is unique in having an extremely large number
 of authors with few training tweets per author:
 Over 90\% of our authors have fewer than 50 tweets,
@@ -105,17 +108,17 @@ existing work (to our knowledge).
 Multi-class classification algorithms may struggle to
 generalise after seeing so few examples for most classes.
 
+% Hit 'em with one of these profile-based method sales pitches
 After initially promising results from a profile-based
 baseline, we elect to focus on deeply exploring profile-based
-methods and dynamic features, in the hope that these will
+methods, in the hope that these will
 scale more capably to our `extreme' dataset.
-In particular, we explore various dynamic feature classes,
-coupled with a wide range of profile-based models from
-recent literature.
+We explore a wide range of profile-based models from recent
+literature.
 Furthermore, we reformulate existing distance metrics
 to make them computationally tractable on our large dataset,
-and we introduce new distance metrics of our own design.
-% and we introduce a new distance metric of our own design.
+and we introduce a new distance metric of our own design.
+
 
 
 \section{Feature classes}
@@ -125,7 +128,8 @@ character, byte, and word $n$-grams, for $n = 2,3,4,5,6$.
 
 We also explore \emph{flexible pattern} $n$-grams, dynamic
 feature classes capturing stylometric information such as
-patterns in function-word use\supercite{schwartz2013authorship}.
+patterns in function-word use not captured by regular word 
+$n$-grams\supercite{schwartz2013authorship}.
 Flexible patterns are word $n$-grams where words appearing
 above a certain frequency in the corpus (`high-frequency words',
 or HFWs) are retained, but words appearing below a certain
@@ -143,14 +147,14 @@ by zero or more CWs.
 % $CW$ in the'', which would not have been captured if using
 % word $n$-grams\supercite{schwartz2013authorship}.
 
-\paragraph{Pre-processing}
-We optionally split tweets at word and punctuation boundaries and
-normalise rarely-repeating tokens (e.g. dates, times, numbers)
-before extracting $n$-gram features. To examine the effect of
-this pre-processing, we also compare to using raw text.
+% \paragraph{Pre-processing}
+We optionally \emph{pre-process} tweets,
+tokenising at word and punctuation boundaries and
+normalising infrequent tokens (e.g. dates, times)
+before extracting $n$-gram features.
+We compare this with extracting $n$-grams directly from
+raw text.
 
-% "To assist with distinguishing between the structure and content of a tweet" was nice, does this fit?
-% Sounds much more compact. 
 
 \section{Learners}
 
@@ -159,9 +163,9 @@ Each model defines an author  `profile', and a distance metric $d$
 between these profiles and new tweets.
 We learn profiles for a set $\mathcal{A}$ of candidate authors from
 a corpus of tweets, and then predict the author of each new tweet
-$t$ as $\argmin_{a \in \mathcal{A}} d(a, t)$.\footnote{
-For the models CNG and SRLP, we additionally handle ties
-by selecting the author with the most tweets in the corpus.}
+$t$ as $\argmin_{a \in \mathcal{A}} d(a, t)$.
+% \footnote{For CNG, we additionally handle ties
+% by selecting the author with the most tweets in the corpus.}
 The models are as follows.
 
 \paragraph{Common N-Gram (CNG)}
@@ -201,8 +205,8 @@ an author's profile comprises the set of the $L$ most common
 $n$-grams across the author's tweets. $d_{scap}$ is then defined in
 terms of the overlap of this set with that of the test tweet:
 $$
-d_{scap}(a, t) = 1 - \frac{|X_a \cap X_t|}{L} % display fraction (looks much nicer)
-% d_{scap}(a, t) = 1 - |X_a \cap X_t| / L     % inline fraction (if space needed)
+% d_{scap}(a, t) = 1 - \frac{|X_a \cap X_t|}{L} % display fraction (looks much nicer)
+d_{scap}(a, t) = 1 - |X_a \cap X_t| / L     % inline fraction (if space needed)
 $$
 
 \paragraph{Recentered Local Profile (RLP)} The RLP method\supercite{layton2012recentred}
@@ -249,17 +253,17 @@ The sum over $X_a \cap X_t$ can be computed using an inverted index,
 the sums over $X_a$ are independent of $t$ and can thus be pre-computed,
 and the sum over $X_t$ is a constant.
 
-% \paragraph{Simplified RLP (SRLP)}
-We also adapt the RLP method further by proposing an
-additional, simplified, efficiently computable distance metric
-based on the same profiles---Simplified RLP (SRLP):
-$$
-d_{srlp}(a, t) =
-    \smashoperator[l]{\sum_{x \in X_a \cap X_t}}
-        \frac{ RP_a(x) } { |RP_a(x)| }
-        \cdot
-        \frac{ RP_t(x) }{ |RP_t(x) | }
-$$
+% % \paragraph{Simplified RLP (SRLP)}
+% We also adapt the RLP method further by proposing an
+% additional, simplified, efficiently computable distance metric
+% based on the same profiles---Simplified RLP (SRLP):
+% $$
+% d_{srlp}(a, t) =
+%     \smashoperator[l]{\sum_{x \in X_a \cap X_t}}
+%         \frac{ RP_a(x) } { |RP_a(x)| }
+%         \cdot
+%         \frac{ RP_t(x) }{ |RP_t(x) | }
+% $$
 
 \paragraph{Smooth $P_a$ Cross Entropy (SPaCE)}
 We present a new model for profile-based authorship attribution.
@@ -298,19 +302,21 @@ base models (i.e. by unweighted relative majority vote).
 
 \section{Experiments}
 In this section, we detail our experimental setup for tuning
-and comparatively evaluating our learner/feature class
-combinations, and report our results.
-Since our eventual goal is to attribute each of the unlabelled
-tweets with high accuracy, we adopt accuracy as our performance
-measure.
+and comparatively evaluating each combination of learner and dynamic feature class, and we report our results.
+% Since our eventual goal is to attribute each of the unlabelled
+% tweets with high accuracy, we adopt accuracy as our performance
+% measure.
 
 \paragraph{Data split}
 
-Aside from through the public leaderboard scores (derived from a
-small number of tweets), we can't know the true authors of the
-unlabelled tweets ahead of the competition end time.
-This means we are unable to effectively use these tweets to compare
-the accuracy of different learner/feature class combinations.
+% Aside from through the public leaderboard scores (derived from a
+% small number of tweets), we can't know the true authors of the
+% unlabelled tweets ahead of the competition end time. This means we
+We
+are unable to effectively use our unlabelled tweets to compare
+the accuracy of different learner/feature class combinations,
+since the public leaderboard scores are derived from a small
+number of tweets.
 In response, \emph{we create our own, larger validation dataset}
 by randomly partitioning our labelled dataset in two, as follows:
 
@@ -335,9 +341,9 @@ we observe
 (3) word $n$-grams perform best for $n=2$, where they benefit slightly
     from our pre-processing; and
 (4) flexible pattern $n$-grams perform best with $n=2,3$.
-Figure~\ref{fig:features} exemplifies these relationships.
+Figure~\ref{fig:features} exemplifies some of these relationships.
 For brevity, we report only results from learners trained on these
-high character $n$-grams and low word/flexible pattern $n$-grams below.
+high-$n$ character $n$-grams and low-$n$ word/flexible pattern $n$-grams.
 
 \begin{figure}[h]
     \centering
@@ -350,9 +356,8 @@ high character $n$-grams and low word/flexible pattern $n$-grams below.
     \label{fig:features}
 \end{figure}
 
-% plot of SCAP accuracy vs. n for various levels, normalisation
-
-\paragraph{Tuning hyper-parameters}
+\vspace{-3ex}
+\paragraph{Hyper-parameter tuning}
 
 For each learner/feature class combination, we tune our hyper-parameter
 using grid search optimisation on the reduced training data, as follows:
@@ -360,7 +365,7 @@ using grid search optimisation on the reduced training data, as follows:
 We tune the profile length $L$ for SCAP using an 8-fold cross-validated
 grid search over the reduced training data.
 
-Evaluating each configuration of CNG, XRLP, and SRLP is more
+Evaluating each configuration of CNG, and XRLP is more
 computationally expensive, so for these models we tune $L$ using
 holdout validation rather than 8-fold cross validation
 (we train on 87.5\% of the reduced training data, and select the $L$
@@ -381,7 +386,7 @@ and flexible pattern 2-grams, respectively).
 
 
 \paragraph{Model selection}
-After turning each learner/feature class combination as above,
+After tuning each learner/feature class combination as above,
 we re-train the tuned configurations on the entire reduced
 training set, and measure accuracy with our validation data.
 Table \ref{tab:devresults} summarises our results.
@@ -399,7 +404,7 @@ Models      & $n$ & 4      & 5      & 6           & 2     & 2     & 3    \\
 CNG         &     & 25.4   & 26.2   & 26.4        & 20.5  & 13.8  & 12.5 \\
 SCAP        &     & 21.7   & 22.2   & 22.1        & 14.4  &  9.7  &  8.5 \\
 XRLP        &     & 18.6   & 18.4   & 17.4        & 12.4  &  9.4  & 10.0 \\
-SRLP        &     & 23.7   & 25.4   & 25.7        & 18.3  & 12.5  & 11.9 \\
+% SRLP        &     & 23.7   & 25.4   & 25.7        & 18.3  & 12.5  & 11.9 \\
 SPaCE i     &     & 27.5   & 28.3   & 28.0        & ---   & ---   & ---  \\
 SPaCE ii    & &{\bf 32.7}  & 32.2   & 30.9        & ---   & ---   & ---  \\
 SPaCE iii   &     & 32.5   & 31.5   & 30.1        & ---   & ---   & ---  \\
@@ -417,88 +422,7 @@ achieving a public score of \textbf{34.7\%}.
 
 \section{Critical analysis}
 
-% Matt: Should we leaf this section with the SPaCE discussion?
-% Since it's our strongest model.
-
-% Compare local profile methods and compare to results found in literature - Alice
-\paragraph{CNG, SCAP, RLP} Recent works show RLP outperforms CNG on large documents with few authors\supercite{layton2012recentred}, and SCAP outperforms CNG when there is limited training data per author\supercite{frantzeskou2006effective}. Our results show CNG outperforming both SCAP and RLP. We attribute these contrasting findings to dataset differences---RLP's measure of distinctiveness is % <-- Matt: 'may be'?
-less effective when there is limited training data per author because there is less data to compare distinctiveness. % <-- Matt: This seems a little vague 
-CNG and SCAP are comparable in performance until an author's profile becomes smaller than $L$\supercite{frantzeskou2006effective}.
-% Our implementation overcomes this issue by padding an authors profile with unmatchable $n$-grams until it is at least L in length.
-% Matt: ^^ I think this is not quite true of our implementation (as far as I followed it)
-%          maybe the following sentence instead?
-Our reformulation overcomes this issue by correcting for profile length, as if to pad out an authors profile with $n$-grams until it has length $L$.
-This modification may help explain CNG's effectiveness.
-
-% Matt: NOTE! I am grouping together the discussion of ngrams and
-%             ensemble improvement into a single labelled paragraph:
-\paragraph{Features}
-% compare character grams versus word and flex grams
-% compare features. - Marvin
-% \paragraph{$n$-grams}
-Previous work\supercite{layton2010authorship} finds that character 4-grams
-are the most effective feature class for Twitter data, with a drop in
-accuracy for $n<4$ and $n>4$.
-The study considered only around 50 authors (cf. our 9,297). 
-Our tests show that increasing $n$ tends to increase accuracy. 
-% Matt: ^^ Could we say 'Our tests show that character 5-grams are more effective overall.'? 
-%          Just because that's what the evaluation data we have included seems to say
-
-% The discussion shifts into a new idea here, so I'm inserting a blank line/paragraph break.
-% Matt: vv I think this overlaps considerably with the next paragraph on ensemble result
-%          perhaps we can remove this, or merge?
-Word and flexible pattern $n$-grams perform worse in isolation than character $n$-grams.
-% there's no talk on what word and flex actually represent about the text
-While not the most effective alone, using a combination of these features simultaneously can improve accuracy\supercite{rocha2016authorship}.
-However, the memory and time required to do so make it infeasible on any of our machines.
-% Matt: ^^ This doesn't seem super relevant
-% Matt: vv Are these other suggestions to talk about?
-% Character $n$-grams consistently outperform word and flexible pattern $n$-grams. 
-% % Different levels of $n$-gram captures different information regarding an author's writing habits.
-% Increasing $n$ for character $n$-grams tend to produce more accurate results (except in SPaCE).
-% This contrasts studies which find that $n=4$ was the most effective parameter for their case\supercite{rocha2016authorship}. % actually it's from a citation in that citation which said n=4 is best
-% The studies differ by having few authors - around 50 - whereas we have over 9,000. % IT'S OVER 9000!
-% Combining the studies and our tests suggest that longer character $n$-grams are required as the number of authors increase.
-% % Longer $n$-grams are potentially more specific to an author, as there is more variety of $n$-grams and less likely to be shared between authors.
-% % However doing so also assumes that authors do repeat relatively long sections of text, otherwise learned $n$-grams will never appear in the test data. % learned? common? $n$-grams seen in training?
-% % what do I say about words and flex
-% Word $n$-grams performing consistently worse than character $n$-grams suggest that semantic information of a text is not as important as the raw information itself.
-% % Matt: 'raw information' is quite vague, what do you mean?
-% %       we also discussed mentioning the following points on Tuesday night:
-% %       % flex patterns v. words: trading off structure/content.
-% %       % maybe in this dataset content is more reliable.
-% %       % words v. chars: perhaps the lower density of words
-% %       % (fewer n-grams per tweet) exacerbates our lack-of-data-
-% %       % per-author problem, crippling these profile-based methods
-% %       % (profiles are unreliable without much data).
-% % Longer character $n$-grams can in a sense substitute shorter word $n$-grams by capturing the $n$-grams that span multiple words while also capturing word uni-grams (1-gram).
-% Flexible pattern $n$-grams performed the worse of all features.
-% As it reflects the structure of a text rather than the contents, it may perform more effectively at longer texts. 
-% However, our data comprises of texts with limited length, as such distinguishing structures may not emerge. 
-% % However, with the given data we are dealing with the 140 character limit of a Tweet, there is not much room for distinguishing structure to emerge. % does that make sense? Do we need to justify why it didn't work?
-% Matt: I don't think we need to justify why it didn't work. I think there's probably
-%       room for 'distinguishing structure' in tweets, especially through use of
-%       punctuation. but like we said the other night, maybe content (words) are more
-%       reliable overall in this dataset. it might also be the density problem (fewer
-%       words/flex pattern ngrams fit in a tweet than character ngrams do).
-
-% Combining the features in the ensemble performed better than word and flexible pattern by itself. Suggests ... orthogonal? - Shared
-% \paragraph{Ensemble}
-Character, word and flexible pattern $n$-grams are prone to
-error because of noise in the data.
-Combining the features in the ensemble model captures more
-information about authorship, suggesting that these features
-are orthogonal.
-Future work may investigate more sophisticated methods for
-combining features into a more robust model. 
-
-% Matt: How about:
-% Combining multiple feature classes working at different `levels'
-% within tweets in our SCAP ensemble outperformed each individual
-% feature class. This suggests that different classes are capturing
-% orthogonal aspects of `authorship'.
-% Future work may investigate more sophisticated methods for
-% combining features into a robust model.
+% Matt: I think maybe we should LEAD this section with the SPaCE discussion? Since it's our strongest model.
 
 % SPaCE is better than all profile methods. Why? - Matt
 \paragraph{SPaCE}
@@ -524,7 +448,96 @@ while interpolation methods take corpus-level frequency
 information into account.
 Since authors' $n$-gram distribution are indeed highly
 non-uniform, interpolation smoothing is theoretically
-more appropriate. % TODO: Reword this last sentence.
+more appropriate.
+
+
+% Compare local profile methods and compare to results found in literature - Alice
+\paragraph{CNG, SCAP, XRLP} Recent works show RLP outperforms CNG
+on large documents with few authors\supercite{layton2012recentred},
+and SCAP outperforms CNG when there is limited training data per
+author\supercite{frantzeskou2006effective}.
+In contrast, we see CNG outperforming both SCAP and (X)RLP.
+XRLP may be under-performing due to our small (per author)
+dataset---profiles based on recentered frequencies may be unreliable
+when computed based on noisy $n$-gram counts.
+CNG's under-performance in \cite{frantzeskou2006effective} with profiles
+shorter than $L$ may be due to a flaw in the distance metric, which
+our reformulation implicitly overcomes (we correct for short profiles by
+using a constant offset term, effectively assuming all authors have at least $L$ $n$-grams).
+
+% compare character grams versus word and flex grams - Marvin
+\paragraph{Features}
+% % THIS IS MOSTLY REPORTING let's try for some more ANALYSIS
+% Previous work\supercite{layton2010authorship} reports that character 4-grams
+% are the most effective dynamic feature class for Twitter data.
+% However, the study considered only around 50 authors (cf. our 9,297). 
+% % Our tests show that different models require different $n$ to be most effective. % - Updated Marvin
+% % Our tests show that increasing $n$ tends to increase accuracy. 
+% % Matt: ^^ Could we say instead:
+% % Our tests show that character 5-grams are more effective overall.
+% % (Just because that's what the evaluation data we have included seems to say)
+% % Marvin: I think the evaluation data shows that n is all over the place. 
+% % Increasing $n$ for character $n$-grams tend to produce more accurate results (except in SPaCE).
+% % This contrasts studies which find that $n=4$ was the most effective parameter for their case\supercite{rocha2016authorship}. % actually it's from a citation in that citation which said n=4 is best
+% % The studies differ by having few authors - around 50 - whereas we have over 9,000. % IT'S OVER 9000!
+% % Combining the studies and our tests suggest that longer character $n$-grams are required as the number of authors increase.
+% % % Longer $n$-grams are potentially more specific to an author, as there is more variety of $n$-grams and less likely to be shared between authors.
+% % % However doing so also assumes that authors do repeat relatively long sections of text, otherwise learned $n$-grams will never appear in the test data. % learned? common? $n$-grams seen in training?
+
+% % Word $n$-grams performing consistently worse than character $n$-grams suggest that semantic information of a text is not as important as the raw information itself.
+% % % Matt: 'raw information' is quite vague, what do you mean?
+% % % Longer character $n$-grams can in a sense substitute shorter word $n$-grams by capturing the $n$-grams that span multiple words while also capturing word uni-grams (1-gram).
+
+% % Flexible pattern $n$-grams performed the worse of all features.
+% % As it reflects the structure of a text rather than the contents, it may perform more effectively at longer texts. 
+% % However, our data comprises of texts with limited length, as such distinguishing structures may not emerge. 
+% % % However, with the given data we are dealing with the 140 character limit of a Tweet, there is not much room for distinguishing structure to emerge. % does that make sense? Do we need to justify why it didn't work?
+% % Matt: I don't think we need to justify why it didn't work. I think there's probably
+% %       room for 'distinguishing structure' in tweets, especially through use of
+% %       punctuation.
+
+% characters reign supreme: character density per-tweet explains?
+We see character $n$-grams enabling greater accuracy compared to word
+and flexible pattern $n$-grams.
+Our lack of data (per author) may be responsible;
+The same amount of text from a given author yields more character $n$-grams
+than word or flexible pattern $n$-grams, possibly leading to a more
+discriminating learned profile.
+
+% flex patterns v. words: trading off structure/content.
+% maybe in this dataset content is more reliable.
+We further observe word-based models consistently outperforming
+flexible pattern-based models. Flexible pattern $n$-grams are similar to
+word $n$-grams in their number of $n$-grams per tweet, but they
+sacrifice content information about an author's text by retaining only HFWs,
+thereby striking a different position on a style/content information
+trade-off. 
+While word $n$-grams are not necessarily superior in general, it seems
+that content is more salient in our task.
+
+% Combining the features in the ensemble performed better than word and flexible pattern by itself. Suggests ... orthogonal? - Shared
+Character, word and flexible pattern $n$-grams are individually
+incomplete representations of text.
+Combining the features in the ensemble model must capture more
+information about authorship, suggesting that our feature classes
+are somewhat orthogonal.
+Future work may investigate more sophisticated methods for
+combining multiple dynamic feature classes into a more robust model. 
+
+% Matt: How about this alternative paragraph:
+% Combining multiple dynamic feature classes working at different
+% within tweets in our SCAP ensemble outperforms models based on
+% each individual feature class.
+% This suggests that different classes are capturing
+% orthogonal aspects of `authorship'.
+% Future work may investigate more sophisticated methods for
+% combining features to form a robust model.
+
+% Other snippets from above n-gram section (old):
+% Word and flexible pattern $n$-grams perform worse in isolation than character $n$-grams.
+% % there's no talk on what word and flex actually represent about the text
+% While not the most effective alone, using a combination of these features simultaneously can improve accuracy\supercite{rocha2016authorship}.
+% % % Different levels of $n$-gram captures different information regarding an author's writing habits.
 
 
 \printbibliography
