@@ -179,6 +179,7 @@ $t$ as $\argmin_{a \in \mathcal{A}} d(a, t)$.
 The models are as follows.
 
 \paragraph{Common N-Gram (CNG)}
+\label{par:cng}
 The CNG model\supercite{kevselj2003n} defines an author's profile
 as the normalised frequencies of the $L$ most common $n$-grams
 across all of the author's tweets, where $L$ is a hyper-parameter.
@@ -188,11 +189,14 @@ d_{cng}(a, t) =
     \smashoperator{\sum_{x \in X_a \cup X_t}}\ 
         {\left ( \frac{2 \cdot (P_a(x) - P_t(x))}{P_a(x) + P_t(x)} \right )}^2
 $$
-where $P_a(x)$ is the normalised frequency of $n$-gram $x$ in
-$a$'s profile, $P_t(x)$ is the normalised frequency of $n$-gram
-$x$ in $t$, $X_a$ is the set of $n$-grams in author $a$'s profile
-(i.e. their $L$ most frequent $n$-grams), and $X_t$ is the set
-of $n$-grams in $t$.
+where
+$X_a$ is the set of $n$-grams in author $a$'s profile
+(i.e.~their $L$ most frequent $n$-grams),
+$X_t$ is the set of $n$-grams in $t$,
+$P_a(x)$ is the normalised frequency of $n$-gram $x$ in $a$'s
+tweets (or 0 if $x \notin X_a$),
+and
+$P_t(x)$ is $x$'s normalised frequency in $t$.
 
 This sum over all $n$-grams in $X_a \cup X_t$ is expensive
 to compute for every author, for every test tweet.
@@ -215,25 +219,32 @@ an author's profile comprises the set of the $L$ most common
 $n$-grams across the author's tweets. $d_{scap}$ is then defined in
 terms of the overlap of this set with that of the test tweet:
 $$
-% d_{scap}(a, t) = 1 - \frac{|X_a \cap X_t|}{L} % display fraction (looks much nicer)
-d_{scap}(a, t) = 1 - |X_a \cap X_t| / L     % inline fraction (if space needed)
+% display fraction (looks much nicer)
+% d_{scap}(a, t) = 1 - \frac{|X_a \cap X_t|}{L}
+% inline fraction (if space needed)
+d_{scap}(a, t) = 1 - |X_a \cap X_t| / L
 $$
 
 As $d_{scap}$ is already in terms of only $X_a \cap X_t$, we can
 efficiently compute it for many authors using an inverted index.
 
-\paragraph{Recentered Local Profile (RLP)} The RLP method\supercite{layton2012recentred}
-defines an author's profile as the $L$ $n$-grams that have
-the highest absolute `recentered' normalised frequency,
-$RP(x) = P(x) - E(x)$ where $P(x)$ is defined as above, and
-$E(x)$ is the normalised frequency of $n$-gram $x$ in all tweets.
+\paragraph{Recentered Local Profile (RLP)}
+\label{par:rlp}
+RLP\supercite{layton2012recentred} builds profiles
+from the $L$ $n$-grams with the highest absolute `recentered'
+normalised frequency,
+$RP_a(x) = P_a(x) - E(x)$
+where $P_a(x)$ is the normalised frequency of $n$-gram $x$ in
+$a$'s tweets, and
+$E(x)$ is the normalised frequency of $x$ in all tweets.
 %\footnote{Conceptually, $E(x)$ approximates the probability
 %distribution of $n$-grams over the English language. As the
 %probability distribution of $n$-grams over the English language
 %is unknown, and the data set is not exclusively in English, we
 %approximate $E(x)$ by calculating the normalised frequencies
 %of all $n$-grams in the training set.}
-$d_{rlp}$ is formulated as a cosine distance over
+Defining $RP_t(x)$ similarly, 
+$d_{rlp}$ is a cosine distance over
 $X_a \cup X_t$:\footnote{
 This is a corrected version of the formulation in \cite{layton2012recentred},
 based on \cite{layton2014tutorial}.}
@@ -281,10 +292,11 @@ and the sum over $X_t$ is a constant.
 % $$
 
 \paragraph{Smooth $P_a$ Cross Entropy (SPaCE)}
+\label{par:space}
 We present a new model for profile-based authorship attribution.
-SPaCE defines an author profile using the \emph{smoothed}
-normalised $n$-gram frequencies from the author's tweets,
-including for unseen $n$-grams. 
+SPaCE defines a profile using the \emph{smoothed} normalised
+$n$-gram frequencies from the author's tweets, including for
+unseen $n$-grams. 
 We interpret these normalised frequencies as a probability
 distribution over the set of all $n$-grams, and use the cross
 entropy between the probability distributions of $t$ and $a$
@@ -308,7 +320,7 @@ $K$, $\alpha$, and $k$ are hyper-parameters.
 
 While smoothing destroys the sparsity of profiles, it's still
 possible to efficiently compute $d_{space}$ for many authors.\footnotemark
-\footnotetext{See notes on computing SPaCE in appendix A.3.}
+\footnotetext{\label{note:space} See notes on computing SPaCE in appendix A.3.}
 
 \paragraph{Ensemble}
 We create a simple ensemble in an attempt to combine multiple
@@ -329,10 +341,10 @@ and comparatively evaluating each combination of learner and dynamic feature cla
 
 \paragraph{Data split}
 
-Aside from through the public leaderboard scores (derived from a
-small number of tweets), we can't know the true authors of the
-unlabelled tweets ahead of the competition end time. This means we
-% We
+% Aside from through the public leaderboard scores (derived from a
+% small number of tweets), we can't know the true authors of the
+% unlabelled tweets ahead of the competition end time. This means we
+We
 are unable to effectively use our unlabelled tweets to compare
 the accuracy of different learner/feature class combinations,
 since the public leaderboard scores are derived from a small
@@ -645,8 +657,8 @@ $
 \argmin_{a\in\mathcal{A}}{d(a, t)}
 $
 for family of authors $\mathcal{A}$ and tweet $t$, over a large
-number of tweets. Moreover, author profiles contain only a small
-number of the many possible $n$-gram features that occur in new
+number of tweets. Moreover, author profiles often contain only
+a small number of the many possible $n$-grams that occur in test
 tweets, and so the sets of $n$-grams involved will be sparsely
 overlapping.
 Thus, where the distance metric contains a sum over an intersection,
@@ -655,10 +667,279 @@ compute at training time.
 
 \subsection*{A.1 Reformulating CNG}
 
+The \hyperlink{ref:cng}{CNG method}'s distance metric is expressed
+as a sum over $X_a \cup X_t$, not an intersection. The inverted index
+method does not apply directly in this situation. However, using the
+set identities\footnotemark
+\begin{align}
+\label{eq:plus}
+A \cup B   &= (A \cap B) + (A \cap B^c) + (A^c \cap B)
+\\
+\label{eq:minus}
+A \cap B^c &= A - (A \cap B)
+\end{align}
+\footnotetext{$A + B$ is set union for mutually exclusive sets $A$
+and $B$. A sum over $A+B$ equals the sum over $A$ plus the sum over
+$B$.
+$A - B$ is set difference for $B \subset A$. A sum over $A - B$
+equals the sum over $A$ minus the sum over $B$.}
+We can reformulate $d_{cng}$ in terms of $X_a \cap X_t$.
+First, define
+$
+F_{a,t}(x)
+=
+{\left ( \frac{2 \cdot (P_a(x) - P_t(x))}{P_a(x) + P_t(x)} \right )}^2
+$ for brevity.
+Then,
+\begin{flalign*}
+d_{cng}(a, t)
+&=
+    \smashoperator{\sum_{x \in X_a \cup X_t}}\ 
+        {\left ( \frac{2 \cdot (P_a(x) - P_t(x))}{P_a(x) + P_t(x)} \right )}^2
+\equiv
+    \smashoperator{\sum_{x \in X_a \cup X_t}} F_{a,t}(x)
+\\
+&=
+    \smashoperator{\sum_{x \in X_a \cap X_t}}   F_{a,t}(x)
+    +
+    \smashoperator{\sum_{x \in X_a \cap X_t^c}} F_{a,t}(x)
+    +
+    \smashoperator{\sum_{x \in X_a^c \cap X_t}} F_{a,t}(x) 
+\tag*{by (\ref{eq:plus})}
+\end{flalign*}
+
+But, if $x \in X_a \cap X_t^c$ then $x \notin X_t$, so $P_t(x) = 0$,
+and $F_{a,t}(x)$ simplifies to
+$\left(\frac{2\cdot P_a(x)}{P_a(x)}\right)^2 = 4$.
+Similarly, if $x \in X_a^c \cap X_t$, then $x \notin X_a$, so $P_a(x) = 0$
+(in CNG, profiles include only normalised frequencies for $n$-grams in
+the top $L$ for each author, $X_a$; all other frequencies are truncated to 0).
+In this case, $F_{a,t}(x) = 4$ also. So,
+\begin{align*}
+d_{cng}(a, t)
+&=
+    \smashoperator{\sum_{x \in X_a \cap X_t}}   F_{a,t}(x)
+    +
+    \smashoperator{\sum_{x \in X_a \cap X_t^c}} 4
+    \hspace{3.3em} + 
+    \smashoperator{\sum_{x \in X_a^c \cap X_t}} 4
+\\
+&=
+    \smashoperator{\sum_{x \in X_a \cap X_t}}   F_{a,t}(x)
+    + \smashoperator{\sum_{x \in X_a}}          4
+    - \smashoperator{\sum_{x \in X_a \cap X_t}} 4
+    + \smashoperator{\sum_{x \in X_t}}          4
+    - \smashoperator{\sum_{x \in X_a \cap X_t}} 4
+\tag*{by (\ref{eq:minus})}
+\\
+&=
+    \smashoperator{\sum_{x \in X_a \cap X_t}}   F_{a,t}(x)
+    + 4 \cdot (
+          |X_a|
+        + |X_t|
+        - 2 \cdot |X_a \cap X_t|
+    )
+\\
+&=
+    \smashoperator{\sum_{x \in X_a \cap X_t}}\ 
+        {\left ( \frac{2 \cdot (P_a(x) - P_t(x))}{P_a(x) + P_t(x)} \right )}^2
+        - 8 \cdot |X_a \cap X_t| + C
+\end{align*} 
+where $C=4 \cdot (|X_a| + |X_t|)$. Assuming all authors use at least
+$L$ $n$-grams throughout the training data, $|X_a| = L$, and so this
+term is an additive constant which will not affect
+$\argmin_{a\in\mathcal{A}}d_{cng}(a,t)$.
+Even if an author has fewer than $L$ $n$-grams in their profile, it
+may be preferable to treat $C$ as constant, so as to avoid biasing
+$d_{cng}$ disproportionately in favour of authors with few tweets.
+We can understand this as implicitly `padding out' profiles with
+zero frequencies for all unseen $n$-grams before truncating profiles
+to the top $L$ most-frequent $n$-grams. 
+
+The remaining terms in this formulation of $d_{cng}$ (the sum over
+$X_a \cap X_t$, and $|X_a \cap X_t|$ itself)
+can be computed efficiently using algorithm \ref{alg:index}.
+
+
 \subsection*{A.2 Approximating RLP}
 
-\subsection*{A.3 Computing SPaCE}
+\hyperlink{par:rlp}{RLP}'s $d_{rlp}$ does not permit
+a reformulation in terms of only $X_a \cap X_t$. However, we can
+approximate $d_{rlp}$ efficiently.
 
+Computing $d_{rlp}(a, t)$, as formulated, requres computing three
+sums, $S_1$, $S_2$, and $S_3$:
+$$
+\overbrace{
+    \smashoperator{\sum_{x \in X_a \cup X_t}} RP_a(x) RP_t(x)
+}^{S_1}
+\qquad
+\overbrace{
+    \smashoperator{\sum_{x \in X_a \cup X_t}} RP_a(x)^2
+}^{S_2}
+\qquad
+\overbrace{
+    \smashoperator{\sum_{x \in X_a \cup X_t}} RP_t(x)^2
+}^{S_3}
+$$
+
+Using identity (\ref{eq:plus}), we can re-write $S_1$: 
+\begin{align*}
+S_1
+&= 
+\smashoperator{\sum_{x \in X_a \cup X_t}}
+    RP_a(x) \cdot RP_t(x)
+\\
+&=
+\smashoperator{\sum_{x \in X_a \cap X_t}}
+    RP_a(x) \cdot RP_t(x)
++
+\smashoperator{\sum_{x \in X_a \cap X_t^c}}
+    RP_a(x) \cdot RP_t(x)
+\\
+&\hspace{10em}+
+\smashoperator{\sum_{x \in X_a^c \cap X_t}}
+    RP_a(x) \cdot RP_t(x)
+\end{align*}
+
+If $x \in X_a \cap X_t^c$, then $x \notin X_t$. In that case,
+$P_t(x)=0$, and so $RP_t(x) = P_t(x) - E(x) = -E(x)$.
+Meanwhile, if $x \in X_a^c \cap C_t$, then $x \notin X_a$.
+This does not mean that $P_a(x) = 0$, but, for large $L$,
+it's likely that $RP_a(x) \approx 0$ (recentered normalised
+frequencies significantly far from 0 are likely to be in $X_a$,
+by definition).
+Thus we can (approximately) simplify $S_1$ to:
+\begin{align*}
+S_1
+&\approx
+\smashoperator{\sum_{x \in X_a \cap X_t}}
+    RP_a(x) \cdot RP_t(x)
++
+\smashoperator{\sum_{x \in X_a \cap X_t^c}}
+    RP_a(x) \cdot (-E(x))
+\\
+&\hspace{10em}+
+\smashoperator{\sum_{x \in X_a^c \cap X_t}}
+    0 \cdot RP_t(x)
+\\
+&=
+\smashoperator{\sum_{x \in X_a \cap X_t}}
+    RP_a(x) \cdot RP_t(x)
+-
+\smashoperator{\sum_{x \in X_a \cap X_t^c}}
+    RP_a(x) \cdot E(x)
++ 0
+\\
+&=
+\smashoperator{\sum_{x \in X_a \cap X_t}}
+    RP_a(x) \cdot RP_t(x)
++
+\smashoperator{\sum_{x \in X_a \cap X_t}}
+    RP_a(x) \cdot E(x)
+\\
+&\hspace{10em}-
+\smashoperator{\sum_{x \in X_a}}
+    RP_a(x) \cdot E(x)
+\tag*{by (\ref{eq:minus})}
+\\
+&=
+\smashoperator{\sum_{x \in X_a \cap X_t}}
+    RP_a(x) \cdot (RP_t(x) + E(x))
+-
+\smashoperator{\sum_{x \in X_a}}
+    RP_a(x) \cdot E(x)
+\\
+&=
+\smashoperator{\sum_{x \in X_a \cap X_t}}
+    RP_a(x) \cdot P_t(x)
+-
+\smashoperator{\sum_{x \in X_a}}
+    RP_a(x) \cdot E(x)
+% \tag*{because $RP_t(x) = P_t(x) - E(x)$}
+\end{align*}
+
+For $S_2$ and $S_3$, note the following identity for sets:
+\begin{equation}
+\label{eq:plus2}
+A \cup B = A + (A^c \cap B)
+\end{equation}
+
+Using (\ref{eq:plus2}), and the same kinds of simplifications
+as for $S_1$, we can rewrite $S_2$ (approximately) as
+\begin{align*}
+S_2
+&=
+    \smashoperator{\sum_{x \in X_a \cup X_t}} RP_a(x)^2
+\\
+&=
+    \smashoperator{\sum_{x \in X_a}} RP_a(x)^2
+    + \smashoperator{\sum_{x \in X_a^c \cap X_t}} RP_a(x)^2
+\tag*{by (\ref{eq:plus2})}
+\\
+&\approx
+    \smashoperator{\sum_{x \in X_a}} RP_a(x)^2
+    + \smashoperator{\sum_{x \in X_a^c \cap X_t}} 0^2
+\\
+&= 
+    \smashoperator{\sum_{x \in X_a}} RP_a(x)^2
+\end{align*}
+and $S_3$ (exactly) as 
+\begin{align*}
+S_3
+&=
+    \smashoperator{\sum_{x \in X_a \cup X_t}} RP_t(x)^2
+\\
+&=
+    \smashoperator{\sum_{x \in X_t}} RP_t(x)^2
+    + \smashoperator{\sum_{x \in X_a \cap X_t^c}} RP_t(x)^2
+\tag*{by (\ref{eq:plus2})}
+\\
+&=
+    \smashoperator{\sum_{x \in X_t}} RP_t(x)^2
+    + \smashoperator{\sum_{x \in X_a \cap X_t^c}} (0 - E(x))^2
+\\
+&=
+    \smashoperator{\sum_{x \in X_t}} RP_t(x)^2
+    + \smashoperator{\sum_{x \in X_a \cap X_t^c}} E(x)^2
+\\
+&=
+    \smashoperator{\sum_{x \in X_t}} RP_t(x)^2
+    \underbrace{
+    + \smashoperator{\sum_{x \in X_a}} E(x)^2
+    - \smashoperator{\sum_{x \in X_a \cap X_t}} E(x)^2
+    }_{\text{Oops! I forgot this in $d_{xrlp}$}}
+\tag*{by (\ref{eq:minus})}
+\end{align*}
+
+Thus, we define
+$$
+d_{xrlp}(a, t)
+= 1 -
+\frac{\displaystyle
+    \smashoperator[r]{\sum_{x \in X_a \cap X_t}}
+        RP_a(x) \cdot P_t(x)
+    - \smashoperator{\sum_{x \in X_a}}
+        RP_a(x) \cdot E(x)
+}{\displaystyle
+    \sqrt{\smashoperator[r]{\sum_{x \in X_a}} RP_a(x)^2
+    \cdot \smashoperator{\sum_{x \in X_t}} RP_t(x)^2}
+}
+$$
+
+All components of $d_{xrlp}(a, t)$ are either independent of
+$a$ or $t$ (and can thus be precomputed) or are a sum over
+$X_a \cap X_t$ (and can thus be computed efficiently using
+algorithm \ref{alg:index}).
+
+
+
+\subsection*{A.3 Computing with smoothed distributions}
+
+The profile smoothing we employ in the \hyperlink{par:space}{SPaCE
+model} destroys the sparsity of profiles. However, depending on the
+choice of smoothing method, $d_{space}$ may still permit an efficient
+reformulation.
 
 
 
