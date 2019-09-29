@@ -936,10 +936,31 @@ algorithm \ref{alg:index}).
 
 \subsection*{A.3 Computing with smoothed distributions}
 
-The profile smoothing we employ in the \hyperlink{par:space}{SPaCE
-model} destroys the sparsity of profiles. However, depending on the
-choice of smoothing method, $d_{space}$ may still permit an efficient
-reformulation.
+The profile smoothing we employ in the
+\hyperlink{par:space}{SPaCE method} destroys profile sparsity,
+by design. However, depending on the choice of smoothing method,
+$d_{space}$ may still permit an efficient reformulation.
+For all three methods explored in this report, this is the case.
+
+To see why, first consider defining $X_a$ for SPaCE profiles to
+be the set of all $n$-grams with non-zero normalised frequencies.
+If we can express $d_{space}$ in terms of sums over $X_a \cap X_t$,
+we might hope to compute it efficiently using algorithm \ref{alg:index},
+as for CNG, SCAP and XRLP---even without truncating profiles to $L$,
+many $n$-grams will be unused by many authors.
+
+The seeming difficulty arises because
+
+if the
+probabilities introduced when $P_a(x)=0$ are sufficiently simple
+(in particular, if they factorise into a product of one term
+independent of $x$ and another term or independent of $a$).
+
+First, note one final set identity:
+\begin{equation}
+\label{eq:plus3}
+A = (A \cap B) + (A \cap B^c)
+\end{equation}
 
 
 
