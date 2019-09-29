@@ -50,6 +50,10 @@
 \usepackage{enumitem}
 \usepackage[font=footnotesize]{caption}
 
+\usepackage{algpseudocode}
+\usepackage{algorithmicx}
+\usepackage{algorithm}
+
 
 
 \title{COMP90051 Statistical Machine Learning Project 1 Report}
@@ -569,7 +573,94 @@ combining multiple dynamic feature classes into a more robust model.
 
 \printbibliography
 
-% TODO: Add appendix
+\section{Appendix A}
+
+\subsection*{A.0 Inverted index computation}
+
+Consider computing a sum $s(A)$ of some function $f$ over the elements
+in the intersection of two sets $A$ and $B$, for many $A$ in some
+family $\mathcal{A}$:
+$$
+s(A)
+    = \smashoperator{\sum_{x \in A \cap B}} f(x)
+\qquad (A \in \mathcal{A})
+$$
+When $|A| > |B|$ on average, a naive algorithm is as follows:
+\begin{algorithm}
+\caption{Naive computation of $s(A)$ for $A \in \mathcal{A}$}
+\label{alg:naive}
+\begin{algorithmic}
+    \State $s \gets$ a mapping from sets $A$ to accumulators $s[A]$
+    \For{$x \in B$}
+        \For{$A \in \mathcal{A}$}
+            \If{$x \in A$}
+                \State $s[A] \gets s[A] + f(x)$
+                \Comment{$s[A]$ defaults to 0}
+            \EndIf
+        \EndFor
+    \EndFor
+    \Comment{Now, $s[A]$ contains $s(A)$}
+\end{algorithmic}
+\end{algorithm}
+
+Algorithm \ref{alg:naive} runs in $\mathcal{O}(|B|\times|\mathcal{A}|)$ time.
+However, if each element of $B$ is an element of only a small number
+of $A \in\mathcal{A}$, many iterations will contribute nothing to
+the accumulators.
+
+A well-known idea from information retrieval is to use an
+index (or `inverted index') to allow us to iterate over only
+the sets $A$ that will contribute to an accumulator for a particular
+$x\in B$. Constructing this index takes as much time as the previous
+algorithm, but construction time is offset by faster computation of
+sums over many different $B$s.
+
+The idea is to precompute, for each (potential) element $x$, the set
+of those $A$ containing $x$. These are the $A$s for which $x$ will
+contribute to the sum $s(A)$.
+Then, for each $x\in B$, we iterate through these so-called `posting
+lists' instead of $\mathcal{A}$.
+\begin{algorithm}
+\caption{Indexed computation of $s(A)$ for $A \in \mathcal{A}$}
+\label{alg:index}
+\begin{algorithmic}
+    \State $p \gets$ a mapping from $x \in B$ to $\{ A \in \mathcal{A} \ |\  x \in A \}$
+    \State $s \gets$ a mapping from sets $A$ to accumulators $s[A]$
+    \For{$x \in B$}
+        \For{$A \in p[x]$}
+            \State $s[A] \gets s[A] + f(x)$
+            \Comment{$s[A]$ defaults to 0}
+        \EndFor
+    \EndFor
+    \Comment{Now, $s[A]$ contains $s(A)$} 
+\end{algorithmic}
+\end{algorithm}
+
+Algorithm \ref{alg:index} runs in $\mathcal{O}(\sum_{A \in \mathcal{A}} |A \cap B|)$
+time (not counting constructing $p$), with no unnecessary iterations.
+
+This enhancement applies to our situation. For profile-based
+authorship attribution methods, we must compute
+$
+\argmin_{a\in\mathcal{A}}{d(a, t)}
+$
+for family of authors $\mathcal{A}$ and tweet $t$, over a large
+number of tweets. Moreover, author profiles contain only a small
+number of the many possible $n$-gram features that occur in new
+tweets, and so the sets of $n$-grams involved will be sparsely
+overlapping.
+Thus, where the distance metric contains a sum over an intersection,
+we can calculate this component quickly using an inverted index we
+compute at training time.
+
+\subsection*{A.1 Reformulating CNG}
+
+\subsection*{A.2 Approximating RLP}
+
+\subsection*{A.3 Computing SPaCE}
+
+
+
 
 
 \end{document}
