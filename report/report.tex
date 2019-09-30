@@ -54,7 +54,7 @@
 \usepackage{algorithmicx}
 \usepackage{algorithm}
 
-
+% \allowdisplaybreaks
 
 \title{COMP90051 Statistical Machine Learning Project 1 Report}
 \author{
@@ -212,7 +212,7 @@ $$
 where $C=4 \cdot (L + |X_t|)$ is a constant.
 We can efficiently compute this sum (and $|X_a \cap X_t|$)
 using an inverted index.
-\footnotetext{See notes on reformulating CNG in appendix A.1.}
+\footnotetext{See notes on reformulating CNG in appendix \hyperref[A1]{A.1}.}
 
 \paragraph{Source Code Author Profile (SCAP)}
 In SCAP\supercite{frantzeskou2006effective} an author's profile
@@ -263,7 +263,8 @@ $$
 As with CNG, this calculation is prohibitively expensive at our scale.
 An exact formulation in terms of only $X_a \cap X_t$ is not possible,
 so we approXimate RLP (XRLP) instead\footnotemark:
-\footnotetext{See derivation of XRLP in appendix A.2.}
+\footnotetext{See derivation of XRLP in appendix \hyperref[A2]{A.2},
+including addendum.}
 $$
 d_{xrlp}(a, t) = 1 -
 \frac{\displaystyle
@@ -321,7 +322,7 @@ $K$, $\alpha$, and $k$ are hyper-parameters.
 
 While smoothing destroys the sparsity of profiles, it's still
 possible to efficiently compute $d_{space}$ for many authors.\footnotemark
-\footnotetext{\label{note:space} See notes on computing SPaCE in appendix A.3.}
+\footnotetext{See notes on computing SPaCE in appendix \hyperref[A3]{A.3}.}
 
 \paragraph{Ensemble}
 We create a simple ensemble in an attempt to combine multiple
@@ -436,7 +437,8 @@ Models      & $n$ & 4      & 5      & 6           & 2     & 2     & 3    \\
 \cmidrule(r){1-1} \cmidrule{3-8} 
 CNG         &     & 25.4   & 26.2   & 26.4        & 20.5  & 13.8  & 12.5 \\
 SCAP        &     & 21.7   & 22.2   & 22.1        & 14.4  &  9.7  &  8.5 \\
-XRLP        &     & 18.6   & 18.4   & 17.4        & 12.4  &  9.4  & 10.0 \\
+XRLP%\footnotemark
+            &     & 18.6   & 18.4   & 17.4        & 12.4  &  9.4  & 10.0 \\
 % SRLP        &     & 23.7   & 25.4   & 25.7        & 18.3  & 12.5  & 11.9 \\
 SPaCE i     &     & 27.5   & 28.3   & 28.0        & ---   & ---   & ---  \\
 SPaCE ii    & &{\bf 32.7}  & 32.2   & 30.9        & ---   & ---   & ---  \\
@@ -448,12 +450,15 @@ Ensemble    &     & \multicolumn{6}{c}{ ---23.4--- }\\ % (char23456grams+word2gr
 \caption{Tuned model accuracy on held-out validation data.}
 \label{tab:devresults}
 \end{table}
+% \footnotetext{See appendix \hyperref[A2]{A.2}:
+% These results are from XRLP with a small bug.}
 
+\vspace{-2ex}
 We re-train our best performing model/feature class combination
 (SPaCE ii, character 4-grams) on the entire labelled dataset for
 submission,
-achieving a public score of \textbf{34.7\%}.\footnote{The same 
-model achieves \textbf{35.0\%} accuracy on the private dataset.}
+achieving a public score of \textbf{34.7\%} accuracy,
+and \textbf{35.0\%} accuracy on the private dataset.
 
 \section{Critical analysis}
 
@@ -510,34 +515,6 @@ assuming all authors have at least $L$ $n$-grams).
 
 % compare character grams versus word and flex grams - Marvin
 \paragraph{Features}
-% % THIS IS MOSTLY REPORTING let's try for some more ANALYSIS
-% Previous work\supercite{layton2010authorship} reports that character 4-grams
-% are the most effective dynamic feature class for Twitter data.
-% However, the study considered only around 50 authors (cf. our 9,297). 
-% % Our tests show that different models require different $n$ to be most effective. % - Updated Marvin
-% % Our tests show that increasing $n$ tends to increase accuracy. 
-% % Matt: ^^ Could we say instead:
-% % Our tests show that character 5-grams are more effective overall.
-% % (Just because that's what the evaluation data we have included seems to say)
-% % Marvin: I think the evaluation data shows that n is all over the place. 
-% % Increasing $n$ for character $n$-grams tend to produce more accurate results (except in SPaCE).
-% % This contrasts studies which find that $n=4$ was the most effective parameter for their case\supercite{rocha2016authorship}. % actually it's from a citation in that citation which said n=4 is best
-% % The studies differ by having few authors - around 50 - whereas we have over 9,000. % IT'S OVER 9000!
-% % Combining the studies and our tests suggest that longer character $n$-grams are required as the number of authors increase.
-% % % Longer $n$-grams are potentially more specific to an author, as there is more variety of $n$-grams and less likely to be shared between authors.
-% % % However doing so also assumes that authors do repeat relatively long sections of text, otherwise learned $n$-grams will never appear in the test data. % learned? common? $n$-grams seen in training?
-
-% % Word $n$-grams performing consistently worse than character $n$-grams suggest that semantic information of a text is not as important as the raw information itself.
-% % % Matt: 'raw information' is quite vague, what do you mean?
-% % % Longer character $n$-grams can in a sense substitute shorter word $n$-grams by capturing the $n$-grams that span multiple words while also capturing word uni-grams (1-gram).
-
-% % Flexible pattern $n$-grams performed the worse of all features.
-% % As it reflects the structure of a text rather than the contents, it may perform more effectively at longer texts. 
-% % However, our data comprises of texts with limited length, as such distinguishing structures may not emerge. 
-% % % However, with the given data we are dealing with the 140 character limit of a Tweet, there is not much room for distinguishing structure to emerge. % does that make sense? Do we need to justify why it didn't work?
-% % Matt: I don't think we need to justify why it didn't work. I think there's probably
-% %       room for 'distinguishing structure' in tweets, especially through use of
-% %       punctuation.
 
 % characters reign supreme: character density per-tweet explains?
 We see character $n$-grams enabling greater accuracy compared to word
@@ -568,27 +545,13 @@ are somewhat orthogonal.
 Future work may investigate more sophisticated methods for
 combining multiple dynamic feature classes into a more robust model. 
 
-% Matt: How about this alternative paragraph:
-% Combining multiple dynamic feature classes working at different
-% within tweets in our SCAP ensemble outperforms models based on
-% each individual feature class.
-% This suggests that different classes are capturing
-% orthogonal aspects of `authorship'.
-% Future work may investigate more sophisticated methods for
-% combining features to form a robust model.
-
-% Other snippets from above n-gram section (old):
-% Word and flexible pattern $n$-grams perform worse in isolation than character $n$-grams.
-% % there's no talk on what word and flex actually represent about the text
-% While not the most effective alone, using a combination of these features simultaneously can improve accuracy\supercite{rocha2016authorship}.
-% % % Different levels of $n$-gram captures different information regarding an author's writing habits.
-
 
 \printbibliography
 
-\section{Appendix A}
+\section{Appendix}
 
 \subsection*{A.0 Inverted index computation}
+\label{ax:invertedindex}
 
 Consider computing a sum $s(A)$ of some function $f$ over the elements
 in the intersection of two sets $A$ and $B$, for many $A$ in some
@@ -669,6 +632,7 @@ we can calculate this component quickly using an inverted index we
 compute at training time.
 
 \subsection*{A.1 Reformulating CNG}
+\label{A1}
 
 The \hyperlink{par:cng}{CNG method}'s distance metric is expressed
 as a sum over $X_a \cup X_t$, not an intersection. The inverted index
@@ -759,12 +723,13 @@ We can understand this as implicitly `padding out' profiles with
 zero frequencies for all unseen $n$-grams before truncating profiles
 to the top $L$ most-frequent $n$-grams. 
 
-The remaining terms in this formulation of $d_{cng}$ (the sum over
-$X_a \cap X_t$, and $|X_a \cap X_t|$ itself)
-can be computed efficiently using algorithm \ref{alg:index}.
+We can efficienty compute the remaining terms in this formulation
+of $d_{cng}$ (the sum over $X_a \cap X_t$, and $|X_a \cap X_t|$
+itself) using algorithm \ref{alg:index}.
 
 
 \subsection*{A.2 Approximating RLP}
+\label{A2}
 
 \hyperlink{par:rlp}{RLP}'s $d_{rlp}$ does not permit
 a reformulation in terms of only $X_a \cap X_t$. However, we can
@@ -887,7 +852,7 @@ S_2
 &= 
     \smashoperator{\sum_{x \in X_a}} RP_a(x)^2
 \end{align*}
-and $S_3$ (exactly) as 
+and $S_3$ (approximately) as 
 \begin{align*}
 S_3
 &=
@@ -906,15 +871,17 @@ S_3
     \smashoperator{\sum_{x \in X_t}} RP_t(x)^2
     + \smashoperator{\sum_{x \in X_a \cap X_t^c}} E(x)^2
 \\
+&\approx
+    \smashoperator{\sum_{x \in X_t}} RP_t(x)^2
+    + \smashoperator{\sum_{x \in X_a \cap X_t^c}} 0^2
+\tag{$*$}
+\\
 &=
     \smashoperator{\sum_{x \in X_t}} RP_t(x)^2
-    \underbrace{
-    + \smashoperator{\sum_{x \in X_a}} E(x)^2
-    - \smashoperator{\sum_{x \in X_a \cap X_t}} E(x)^2
-    }_{\text{Oops! I forgot this in $d_{xrlp}$}}
-\tag*{by (\ref{eq:minus})}
 \end{align*}
-
+where in step ($*$) we note that $n$-grams with high $E(x)$
+are likely to appear in any given tweet, so $E(x)$ should be
+small for any $x \notin X_t$.
 Thus, we define
 $$
 d_{xrlp}(a, t)
@@ -935,8 +902,30 @@ $a$ or $t$ (and can thus be precomputed) or are a sum over
 $X_a \cap X_t$ (and can thus be computed efficiently using
 algorithm \ref{alg:index}).
 
+\paragraph{Addendum}
+Returning to step ($*$), we note that an efficiently computable
+\emph{and exact} formulation of $S_3$ is:
+\begin{align*}
+S_3
+&=
+    \smashoperator{\sum_{x \in X_t}} RP_t(x)^2
+    + \smashoperator{\sum_{x \in X_a \cap X_t^c}} E(x)^2
+\\
+&=
+    \smashoperator{\sum_{x \in X_t}} RP_t(x)^2
+    + \smashoperator{\sum_{x \in X_a}} E(x)^2
+    - \smashoperator{\sum_{x \in X_a \cap X_t}} E(x)^2
+\tag*{by (\ref{eq:minus})}
+\end{align*}
+
+This leads to a slightly improved version of XRLP. Our experiments
+reported above \emph{do not} include this enhancement.
+
+
+
 
 \subsection*{A.3 Computing with smoothed distributions}
+\label{A3}
 
 The profile smoothing we employ in the
 \hyperlink{par:space}{SPaCE method} destroys profile sparsity,
@@ -1017,6 +1006,8 @@ A = (A \cap B) + (A \cap B^c)
 \end{equation}
 and focusing on the sum over $X_t$ in the original formula,
 we may reformulate $d_{space}(a, t)$ as follows:
+\begingroup
+\allowdisplaybreaks
 \begin{align*}
 -d_{space}&(a, t)
         - \ln (P(a)) / N_t
@@ -1049,14 +1040,15 @@ we may reformulate $d_{space}(a, t)$ as follows:
     +
     \smashoperator{\sum_{x \in X_t}} P_t(x) \ln D_a(x)
 \end{align*}
+\endgroup
 
 The first component of the above sum can be efficiently
 computed using algorithm \ref{alg:index}. The second may be
 efficiently computable, depending on the smoothing method.
 
 For each of our smoothing methods, this sum may either be
-precomputed, or independent of $a$ (and therefore unnecessary
-in computing $\argmax_{a \in \mathcal{A}} d_{space}(a, t)$):
+precomputed, or is independent of $a$ (and therefore unnecessary
+in computing $\argmin_{a \in \mathcal{A}} d_{space}(a, t)$):
 
 \begin{enumerate}[label=\roman*.]
 \item
@@ -1112,5 +1104,9 @@ $$
 -\frac{N_a}{K}
 $$
 \end{enumerate}
+
+Using these simplifications, it's possible to efficiently
+compute the minimum $d_{space}(a, t)$ for many authors,
+despite smoothing destroying the sparsity of profiles.
 
 \end{document}
