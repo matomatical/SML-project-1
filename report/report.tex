@@ -179,7 +179,7 @@ $t$ as $\argmin_{a \in \mathcal{A}} d(a, t)$.
 The models are as follows.
 
 \paragraph{Common N-Gram (CNG)}
-\label{par:cng}
+\hypertarget{par:cng}{}
 The CNG model\supercite{kevselj2003n} defines an author's profile
 as the normalised frequencies of the $L$ most common $n$-grams
 across all of the author's tweets, where $L$ is a hyper-parameter.
@@ -214,10 +214,11 @@ We can efficiently compute this sum (and $|X_a \cap X_t|$)
 using an inverted index.
 \footnotetext{See notes on reformulating CNG in appendix A.1.}
 
-\paragraph{Source Code Author Profile (SCAP)} In SCAP\supercite{frantzeskou2006effective}
-an author's profile comprises the set of the $L$ most common
-$n$-grams across the author's tweets. $d_{scap}$ is then defined in
-terms of the overlap of this set with that of the test tweet:
+\paragraph{Source Code Author Profile (SCAP)}
+In SCAP\supercite{frantzeskou2006effective} an author's profile
+comprises the set of the $L$ most common $n$-grams across the
+author's tweets. $d_{scap}$ is then defined in terms of the
+overlap of this set with that of the test tweet:
 $$
 % display fraction (looks much nicer)
 % d_{scap}(a, t) = 1 - \frac{|X_a \cap X_t|}{L}
@@ -229,7 +230,7 @@ As $d_{scap}$ is already in terms of only $X_a \cap X_t$, we can
 efficiently compute it for many authors using an inverted index.
 
 \paragraph{Recentered Local Profile (RLP)}
-\label{par:rlp}
+\hypertarget{par:rlp}{}
 RLP\supercite{layton2012recentred} builds profiles
 from the $L$ $n$-grams with the highest absolute `recentered'
 normalised frequency,
@@ -292,7 +293,7 @@ and the sum over $X_t$ is a constant.
 % $$
 
 \paragraph{Smooth $P_a$ Cross Entropy (SPaCE)}
-\label{par:space}
+\hypertarget{par:space}{}
 We present a new model for profile-based authorship attribution.
 SPaCE defines a profile using the \emph{smoothed} normalised
 $n$-gram frequencies from the author's tweets, including for
@@ -591,34 +592,35 @@ combining multiple dynamic feature classes into a more robust model.
 
 Consider computing a sum $s(A)$ of some function $f$ over the elements
 in the intersection of two sets $A$ and $B$, for many $A$ in some
-family $\mathcal{A}$:
+family $\mathcal{A}$, with each $|A| \gg |B|$. That is,
 $$
 s(A)
     = \smashoperator{\sum_{x \in A \cap B}} f(x)
-\qquad (A \in \mathcal{A})
+\qquad (\text{for each } A \in \mathcal{A})
 $$
-When $|A| > |B|$ on average, a naive algorithm is as follows:
+
+The following naive algorithm (\ref{alg:naive}) runs in
+$\mathcal{O}(|\mathcal{A}|\cdot|B|)$ time.
+However, if each element of $B$ is an element of only a small
+number of $A \in\mathcal{A}$, many iterations of the inner loop
+will contribute nothing to the accumulators (because $x \notin A$).
+
 \begin{algorithm}
 \caption{Naive computation of $s(A)$ for $A \in \mathcal{A}$}
 \label{alg:naive}
 \begin{algorithmic}
     \State $s \gets$ a mapping from sets $A$ to empty accumulators $s[A]$
-    \For{$x \in B$}
-        \For{$A \in \mathcal{A}$}
+    \For{$A \in \mathcal{A}$}
+        \For{$x \in B$}
             \If{$x \in A$}
                 \State $s[A] \gets s[A] + f(x)$
                 \Comment{$s[A]$ defaults to 0}
             \EndIf
         \EndFor
     \EndFor
-    \Comment{Now, $s[A]$ contains $s(A)$}
+    \Comment{Now, $s[A]$ contains $s(A)$ for each $A \in \mathcal{A}$}
 \end{algorithmic}
 \end{algorithm}
-
-Algorithm \ref{alg:naive} runs in $\mathcal{O}(|B|\times|\mathcal{A}|)$ time.
-However, if each element of $B$ is an element of only a small number
-of $A \in\mathcal{A}$, many iterations will contribute nothing to
-the accumulators.
 
 A well-known idea from information retrieval is to use an
 index (or `inverted index') to allow us to iterate over only
@@ -632,6 +634,7 @@ of those $A$ containing $x$. These are the $A$s for which $x$ will
 contribute to the sum $s(A)$.
 Then, for each $x\in B$, we iterate through these so-called `posting
 lists' instead of $\mathcal{A}$.
+
 \begin{algorithm}
 \caption{Indexed computation of $s(A)$ for $A \in \mathcal{A}$}
 \label{alg:index}
@@ -667,7 +670,7 @@ compute at training time.
 
 \subsection*{A.1 Reformulating CNG}
 
-The \hyperlink{ref:cng}{CNG method}'s distance metric is expressed
+The \hyperlink{par:cng}{CNG method}'s distance metric is expressed
 as a sum over $X_a \cup X_t$, not an intersection. The inverted index
 method does not apply directly in this situation. However, using the
 set identities\footnotemark
@@ -933,7 +936,6 @@ $X_a \cap X_t$ (and can thus be computed efficiently using
 algorithm \ref{alg:index}).
 
 
-
 \subsection*{A.3 Computing with smoothed distributions}
 
 The profile smoothing we employ in the
@@ -948,21 +950,167 @@ If we can express $d_{space}$ in terms of sums over $X_a \cap X_t$,
 we might hope to compute it efficiently using algorithm \ref{alg:index},
 as for CNG, SCAP and XRLP---even without truncating profiles to $L$,
 many $n$-grams will be unused by many authors.
+The seeming difficulty arises because while $P_a(x) = 0$ for
+$x \notin X_a$, $P'_a(x) \neq 0$ due to smoothing.
+However, if $P'_a(x)$ is some simple expression of
+$a$ and $x$ when $x \notin X_a$ (namely an expression independent of
+either $a$ or $x$, or factorising into a product of such expressions)
+then we may still reformulate $d_{space}$ into an efficient form.
+For many smoothing methods, this will be the case, since smoothing
+gives each unseen $n$-gram some simple `default' probability.
+Defaults cannot be based on the normalised frequency of the $n$-gram
+in the author's tweets, because the latter is zero.
 
-The seeming difficulty arises because
+Define $D_a(x)$ to represent this `default' probabability for a given
+smoothing method. That is, $D_a(x) = P'_a(x) |_{P_a(x)=0}$.
+Importantly, we must distinguish $D_a(x)$ and $P'_a(x)$ when, for a
+particular $a$ and $x$, $x \in X_a$. In that case, $D_a(x) \neq P'_a(x)$,
+because $D_a(x)$ represents the value that $P'_a(x)$ \emph{would have}
+if we had seen some other $n$-gram every time we saw $x$ in the training
+tweets.
+For our smoothing methods:
+\begin{align*}
+P'_a(x)
+    &= \frac{\text{Count}_a(x) + k}
+            {N_a + k|X|}
+&
+\rightarrow
+D_a(x)
+    &= \frac{k}
+            {N_a + k|X|}
+\tag{additive smoothing}
+\\
+P'_a(x)
+    &= (1-\alpha) P_a(x) + \alpha E(x) 
+&
+\rightarrow
+D_a(x)
+    &= \alpha E(x)
+\tag{interpolation smoothing}
+\\
+P'_a(x)
+    &= (1-\alpha_a)P_a(x)
+        + \alpha_a E(x)
+&
+\rightarrow
+D_a(x)
+    &= \alpha_a E(x)
+\\
+\alpha_a
+    &= \exp\left(-\tfrac{N_a}{K}\right)
+\tag{decaying interpolation smoothing}
+\end{align*}
+where
+$\text{Count}_a(x)$ is the number of times $x$ occurs in $a$'s tweets;
+$N_a$ is the total number of $n$-grams in $a$'s tweets;
+$X$ is the set of all $n$-grams used by all authors, so $|X|$ is the
+    number of distinct $n$-grams;
+$E(x)$ is the normalised frequency of $n$-gram $x$ over all authors'
+    tweets;
+and
+$k$, $\alpha$ and $K$ are our hyperparameters.
 
-if the
-probabilities introduced when $P_a(x)=0$ are sufficiently simple
-(in particular, if they factorise into a product of one term
-independent of $x$ and another term or independent of $a$).
-
-First, note one final set identity:
+Now, noting one final set identity
 \begin{equation}
 \label{eq:plus3}
 A = (A \cap B) + (A \cap B^c)
 \end{equation}
+and focusing on the sum over $X_t$ in the original formula,
+we may reformulate $d_{space}(a, t)$ as follows:
+\begin{align*}
+-d_{space}&(a, t)
+        - \ln (P(a)) / N_t
+        = \smashoperator{\sum_{x \in X_t}} P_t(x) \ln P'_a(x)
+\\
+&=
+    \smashoperator{\sum_{x \in X_t \cap X_a}} P_t(x) \ln P'_a(x)
+    +
+    \smashoperator{\sum_{x \in X_t \cap X_a^c}} P_t(x) \ln P'_a(x)
+\tag*{by (\ref{eq:plus3})}
+\\
+&=
+    \smashoperator{\sum_{x \in X_t \cap X_a}} P_t(x) \ln P'_a(x)
+    +
+    \smashoperator{\sum_{x \in X_t \cap X_a^c}} P_t(x) \ln D_a(x)
+\\
+&=
+    \smashoperator{\sum_{x \in X_t \cap X_a}} P_t(x) \ln P'_a(x)
+    +
+    \smashoperator{\sum_{x \in X_t}} P_t(x) \ln D_a(x)
+\\
+&\hspace{9em}
+    -
+    \smashoperator{\sum_{x \in X_t \cap X_a}}   P_t(x) \ln D_a(x)
+\tag*{by (\ref{eq:minus})}
+\\
+&=
+    \smashoperator{\sum_{x \in X_t \cap X_a}}
+        P_t(x) \ln \frac{P'_a(x)}{D_a(x)}
+    +
+    \smashoperator{\sum_{x \in X_t}} P_t(x) \ln D_a(x)
+\end{align*}
 
+The first component of the above sum can be efficiently
+computed using algorithm \ref{alg:index}. The second may be
+efficiently computable, depending on the smoothing method.
 
+For each of our smoothing methods, this sum may either be
+precomputed, or independent of $a$ (and therefore unnecessary
+in computing $\argmax_{a \in \mathcal{A}} d_{space}(a, t)$):
 
+\begin{enumerate}[label=\roman*.]
+\item
+For additive smoothing, $D_a(x)$ is independent of $x$, so
+$$
+\smashoperator{\sum_{x \in X_t}} P_t(x) \ln D_a(x)
+=
+\ln\left(\frac{k}{N_a + k|X|}\right)\cdot\smashoperator{\sum_{x \in X_t}} P_t(x)
+$$
+
+But $\sum_{x \in X_t} P_t(x) = 1$, so the whole sum simplifies
+to
+$$
+\ln\left(\frac{k}{N_a + k|X|}\right)
+$$
+which can be precomputed per-author at training time.
+
+\item
+For interpolation smoothing, $D_a(x)$ is independent of $a$, so
+the entire sum is independent of $a$ and can be dropped as an
+additive constant.
+$$
+\smashoperator{\sum_{x \in X_t}} P_t(x) \ln D_a(x)
+=
+\smashoperator{\sum_{x \in X_t}} P_t(x) \ln (\alpha E(x))
+$$
+
+\item
+For exponentially decaying interpolation smoothing,
+$D_a(x)=\alpha_a E(x)$ is independent of neither $a$ nor $x$.
+However, it is the product of a factor independent of $x$ ($\alpha_a$)
+and a factor independent of $a$ ($E(x)$). Thus,
+\begin{align*}
+\smashoperator{\sum_{x \in X_t}} P_t(x) \ln D_a(x)
+&=  \smashoperator{\sum_{x \in X_t}} P_t(x) \ln (\alpha_a E(x))
+\\
+&=  \smashoperator{\sum_{x \in X_t}} P_t(x) \ln \alpha_a
+    +
+    \smashoperator{\sum_{x \in X_t}} P_t(x) \ln E(x)
+\\
+&=  \ln \alpha_a \smashoperator{\sum_{x \in X_t}} P_t(x)
+    +
+    \smashoperator{\sum_{x \in X_t}} P_t(x) \ln E(x)
+\end{align*}
+Again, $\sum_{x \in X_t} P_t(x) = 1$, and the second sum can be
+dropped for optimisation. Thus, the whole sum is
+equivalent to
+$$
+\ln \alpha_a
+=
+\ln \exp\left(-\frac{N_a}{K}\right)
+= 
+-\frac{N_a}{K}
+$$
+\end{enumerate}
 
 \end{document}
