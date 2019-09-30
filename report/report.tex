@@ -207,6 +207,7 @@ $$
 d_{cng} (a, t) =
     \smashoperator{\sum_{x \in X_a \cap X_t}}\ 
         {\left ( \frac{2 \cdot (P_a(x) - P_t(x))}{P_a(x) + P_t(x)} \right )}^2
+        \hspace{-1ex}
         - 8 \cdot |X_a \cap X_t| + C
 $$
 where $C=4 \cdot (L + |X_t|)$ is a constant.
@@ -625,7 +626,7 @@ $
 for family of authors $\mathcal{A}$ and tweet $t$, over a large
 number of tweets. Moreover, author profiles often contain only
 a small number of the many possible $n$-grams that occur in test
-tweets, and so the sets of $n$-grams involved will be sparsely
+tweets, and so the sets of $n$-grams involved are sparsely
 overlapping.
 Thus, where the distance metric contains a sum over an intersection,
 we can calculate this component quickly using an inverted index we
@@ -680,7 +681,7 @@ and $F_{a,t}(x)$ simplifies to
 $\left(\frac{2\cdot P_a(x)}{P_a(x)}\right)^2 = 4$.
 Similarly, if $x \in X_a^c \cap X_t$, then $x \notin X_a$, so $P_a(x) = 0$
 (in CNG, profiles include only normalised frequencies for $n$-grams in
-the top $L$ for each author, $X_a$; all other frequencies are truncated to 0).
+the top $L$ for each author, $X_a$; all other frequencies are forgotten).
 In this case, $F_{a,t}(x) = 4$ also. So,
 \begin{align*}
 d_{cng}(a, t)
@@ -710,6 +711,7 @@ d_{cng}(a, t)
 &=
     \smashoperator{\sum_{x \in X_a \cap X_t}}\ 
         {\left ( \frac{2 \cdot (P_a(x) - P_t(x))}{P_a(x) + P_t(x)} \right )}^2
+        \hspace{-1ex}
         - 8 \cdot |X_a \cap X_t| + C
 \end{align*} 
 where $C=4 \cdot (|X_a| + |X_t|)$. Assuming all authors use at least
